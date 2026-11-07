@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Calculadora do 2º Dia — ENEM 2026</title>
+  <meta name="description" content="Quantas questões de Matemática e Natureza você precisa acertar no 2º dia do ENEM para passar no curso que você quer. Por Prof. João Capri.">
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:title" content="Como preciso ir no 2º dia do ENEM?">
+  <meta property="og:description" content="Seus acertos do 1º dia + o curso que você quer = sua meta em Matemática e Natureza.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fudeuenem.com/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+
+  <!-- ===== ANALYTICS: cole aqui o script do seu analytics gratuito
+       (ex.: GoatCounter, Umami Cloud, Cloudflare Web Analytics ou Google Analytics).
+       Exemplo GoatCounter:
+       <script data-goatcounter="https://SEUNOME.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  ===== -->
+</head>
+<body>
+  <main class="wrap">
+
+    <header class="topo">
+      <p class="sobre">ENEM 2026 · 2º dia · 15/11</p>
+      <h1>Como preciso ir no 2º dia do ENEM?</h1>
+      <p class="autor">Prof. João Capri <span data-arroba></span></p>
+    </header>
+
+    <!-- ============ ETAPA 1: 1º DIA + CURSO ============ -->
+    <section class="etapa" id="etapa1">
+      <div class="dupla">
+        <div class="contador">
+          <label class="rot" for="lc">Linguagens</label>
+          <div class="ctl">
+            <button type="button" class="pm" data-alvo="lc" data-d="-1" aria-label="Menos um acerto em Linguagens">−</button>
+            <input type="number" id="lc" min="0" max="45" value="28" inputmode="numeric" aria-describedby="lc_est">
+            <button type="button" class="pm" data-alvo="lc" data-d="1" aria-label="Mais um acerto em Linguagens">+</button>
+          </div>
+          <p class="aux" id="lc_est">acertos de 45</p>
+        </div>
+        <div class="contador">
+          <label class="rot" for="ch">Humanas</label>
+          <div class="ctl">
+            <button type="button" class="pm" data-alvo="ch" data-d="-1" aria-label="Menos um acerto em Humanas">−</button>
+            <input type="number" id="ch" min="0" max="45" value="28" inputmode="numeric" aria-describedby="ch_est">
+            <button type="button" class="pm" data-alvo="ch" data-d="1" aria-label="Mais um acerto em Humanas">+</button>
+          </div>
+          <p class="aux" id="ch_est">acertos de 45</p>
+        </div>
+      </div>
+
+      <div id="busca_box">
+        <div class="campo" id="ies_box">
+          <label class="rot" for="ies_busca">Faculdade</label>
+          <input type="search" id="ies_busca" placeholder="UFPR, UTFPR, USP…" autocomplete="off">
+          <ul class="lista" id="ies_lista" role="listbox"></ul>
+        </div>
+        <div class="escolhido" id="ies_sel" hidden></div>
+
+        <div class="campo" id="curso_box" hidden>
+          <label class="rot" for="curso_busca">Curso</label>
+          <input type="search" id="curso_busca" placeholder="medicina, direito…" autocomplete="off">
+          <ul class="lista" id="curso_lista" role="listbox"></ul>
+        </div>
+        <div class="escolhido" id="curso_sel" hidden></div>
+      </div>
+
+      <details class="manual" id="manual">
+        <summary>Não achou o curso? Digite a nota de corte</summary>
+        <div class="campo">
+          <label class="rot" for="m_nome">Nome do curso</label>
+          <input type="text" id="m_nome" placeholder="Medicina — UFPR" maxlength="60">
+        </div>
+        <div class="campo">
+          <label class="rot" for="m_corte">Nota de corte</label>
+          <input type="number" id="m_corte" step="0.01" min="0" max="1000" placeholder="780,50" inputmode="decimal">
+        </div>
+        <p class="rot">Pesos</p>
+        <div class="grade5">
+          <label>LC<input type="number" class="m_peso" data-a="LC" value="1" min="0" max="10" step="0.5"></label>
+          <label>CH<input type="number" class="m_peso" data-a="CH" value="1" min="0" max="10" step="0.5"></label>
+          <label>CN<input type="number" class="m_peso" data-a="CN" value="1" min="0" max="10" step="0.5"></label>
+          <label>MT<input type="number" class="m_peso" data-a="MT" value="1" min="0" max="10" step="0.5"></label>
+          <label>RED<input type="number" class="m_peso" data-a="RED" value="1" min="0" max="10" step="0.5"></label>
+        </div>
+        <p class="rot">Notas mínimas <span class="aux">(se houver)</span></p>
+        <div class="grade5">
+          <label>LC<input type="number" class="m_min" data-a="LC" min="0" max="1000"></label>
+          <label>CH<input type="number" class="m_min" data-a="CH" min="0" max="1000"></label>
+          <label>CN<input type="number" class="m_min" data-a="CN" min="0" max="1000"></label>
+          <label>MT<input type="number" class="m_min" data-a="MT" min="0" max="1000"></label>
+          <label>RED<input type="number" class="m_min" data-a="RED" min="0" max="1000"></label>
+        </div>
+        <p class="erro" id="m_erro" role="alert"></p>
+        <button type="button" class="acao" id="m_usar">Ver minha meta</button>
+      </details>
+
+      <button type="button" class="acao" id="btn_ok" disabled>Ver minha meta</button>
+    </section>
+
+    <!-- Resumo depois do OK -->
+    <div class="resumo" id="resumo" hidden>
+      <p id="resumo_txt"></p>
+      <button type="button" id="btn_editar">editar</button>
+    </div>
+
+    <!-- ============ ETAPA 2: REDAÇÃO + BALANÇA ============ -->
+    <section class="etapa" id="etapa2" hidden>
+      <div class="redacao">
+        <label class="rot" for="red">Redação</label>
+        <output id="red_v" for="red">720</output>
+        <input type="range" id="red" min="0" max="1000" step="20" value="720">
+      </div>
+
+      <div class="balanca" id="balanca" aria-live="polite">
+        <div class="prato" id="prato_mt">
+          <span class="n" id="r_mt">—</span>
+          <span class="de">de 45</span>
+          <span class="area">Matemática</span>
+        </div>
+        <div class="prato" id="prato_cn">
+          <span class="n" id="r_cn">—</span>
+          <span class="de">de 45</span>
+          <span class="area">Natureza</span>
+        </div>
+        <div class="travessao" id="travessao"></div>
+        <div class="pivo"></div>
+      </div>
+
+      <div class="equilibrio" id="equilibrio_box">
+        <input type="range" id="equilibrio" min="0" max="10" value="5" aria-label="Equilíbrio entre Matemática e Natureza">
+        <div class="pontas"><span>mais Matemática</span><span>mais Natureza</span></div>
+      </div>
+      <p class="nota-rodape" id="r_aviso"></p>
+    </section>
+
+    <!-- ============ ETAPA 3: CARD ============ -->
+    <section class="etapa share" id="etapa3" hidden>
+      <img id="story_img" alt="Card com a sua meta para postar no story">
+      <button type="button" class="acao" id="btn_share">Compartilhar</button>
+      <p class="aux centro">ou toque e segure na imagem para salvar</p>
+    </section>
+
+    <!-- ============ PLANO + CTA ============ -->
+    <section class="etapa" id="etapa4" hidden>
+      <details id="plano_box">
+        <summary>Plano de Matemática até domingo</summary>
+        <p class="aux">Marque até 5 assuntos em que você se sente fraco.</p>
+        <div class="chips" id="topicos"></div>
+        <button type="button" class="acao sec" id="btn_plano">Montar plano</button>
+        <div id="plano"></div>
+      </details>
+
+      <div class="exatoo">
+        <p>Treine exatamente esses assuntos no Exatoo.</p>
+        <a id="btn_exatoo" href="https://app.exatoo.com" target="_blank" rel="noopener">app.exatoo.com →</a>
+      </div>
+
+      <div class="contato" id="contato">
+        <label class="check"><input type="checkbox" id="lgpd"> Quero receber o plano no WhatsApp/e-mail e autorizo o contato do Prof. João Capri.</label>
+        <a class="acao sec desativado" id="btn_contato" href="#" target="_blank" rel="noopener" aria-disabled="true">Quero receber</a>
+      </div>
+    </section>
+
+    <footer class="rodape">
+      <p>Estimativa com base nas edições anteriores. A TRI depende do padrão de respostas e as notas de corte mudam a cada edição. Sem vínculo com o Inep ou o MEC.</p>
+      <p id="fontes"></p>
+    </footer>
+  </main>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
