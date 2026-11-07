@@ -756,9 +756,29 @@
       n.addEventListener('input', atualizarEstimativas);
       n.addEventListener('blur', () => { n.value = clamp(Math.round(+n.value || 0), 0, 45); atualizarEstimativas(); });
     }
-    document.querySelectorAll('.pm').forEach((b) => b.addEventListener('click', () => {
-      const n = $(b.dataset.alvo); n.value = clamp((+n.value || 0) + +b.dataset.d, 0, 45); atualizarEstimativas();
-    }));
+    // Botões + e −: um toque = 1 passo; segurar = repete, acelerando.
+    // (o zoom por toque duplo é desligado no CSS com touch-action: manipulation)
+    document.querySelectorAll('.pm').forEach((b) => {
+      const passo = () => {
+        const n = $(b.dataset.alvo);
+        n.value = clamp((+n.value || 0) + +b.dataset.d, 0, 45);
+        atualizarEstimativas();
+      };
+      let tmr = null, veioDoToque = false;
+      const parar = () => { clearTimeout(tmr); tmr = null; };
+      const repetir = (espera) => { tmr = setTimeout(() => { passo(); repetir(Math.max(60, espera * 0.8)); }, espera); };
+      b.addEventListener('pointerdown', (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        e.preventDefault();               // evita seleção de texto e o menu de toque longo
+        veioDoToque = true;
+        passo();
+        repetir(420);                     // começa a repetir depois de ~0,4 s segurando
+      });
+      for (const ev of ['pointerup', 'pointerleave', 'pointercancel']) b.addEventListener(ev, parar);
+      b.addEventListener('contextmenu', (e) => e.preventDefault());
+      // teclado (Enter/Espaço) gera só "click": conta 1 passo; o click que vem depois do toque é ignorado
+      b.addEventListener('click', () => { if (veioDoToque) { veioDoToque = false; return; } passo(); });
+    });
 
     let t1, t2;
     $('ies_busca').addEventListener('input', (e) => { clearTimeout(t1); t1 = setTimeout(() => listarIES(e.target.value), 100); });
