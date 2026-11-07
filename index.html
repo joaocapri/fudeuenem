@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/style.css?v=8">
 
   <!-- ===== ANALYTICS: cole aqui o script do seu analytics gratuito
        (ex.: GoatCounter, Umami Cloud, Cloudflare Web Analytics ou Google Analytics).
@@ -138,7 +138,12 @@
         <p class="dica-arraste"><span class="seta">⟵</span> arraste para trocar acertos entre as áreas <span class="seta">⟶</span></p>
       </div>
       <p class="nota-rodape" id="r_aviso"></p>
-      <p class="disclaimer"><b>Valores estimados.</b> A conversão acertos → nota usa a mediana das notas dos participantes com o mesmo número de acertos nos microdados do ENEM 2024 e 2025 (Inep). Na TRI, a nota não depende só da quantidade de acertos: depende de quais itens foram acertados (parâmetros de dificuldade, discriminação e acerto ao acaso) e da coerência do padrão de respostas. O mesmo número de acertos pode resultar em notas diferentes, em geral com variação de dezenas de pontos. As notas de corte são do Sisu 2025 e mudam a cada edição. O resultado não garante aprovação.</p>
+      <ul class="disclaimer">
+        <li><b>Estimativa, não garantia.</b></li>
+        <li>Nota = mediana de quem teve os mesmos acertos no ENEM 2024 e 2025 (Inep).</li>
+        <li>Na TRI, a nota depende de quais questões você acerta, não só de quantas.</li>
+        <li>Mínimos eliminatórios calculados com folga. Cortes do Sisu 2025.</li>
+      </ul>
     </section>
 
     <!-- ============ ETAPA 3: CARD ============ -->
@@ -147,20 +152,22 @@
       <button type="button" class="acao" id="btn_share">Compartilhar</button>
       <p class="aux centro">ou toque e segure na imagem para salvar</p>
 
-      <div class="planos" role="group" aria-label="Planos de estudo até domingo">
-        <button type="button" class="plano-btn" data-area="MT" aria-controls="plano_painel">
-          <span class="plano-sub">plano até domingo</span>
-          <span class="plano-area">Matemática</span>
-        </button>
-        <button type="button" class="plano-btn" data-area="CN" aria-controls="plano_painel">
-          <span class="plano-sub">plano até domingo</span>
-          <span class="plano-area">Natureza</span>
-        </button>
+      <div class="planos-bloco">
+        <h2 class="planos-tit">E agora? Monte seu plano <mark class="grifo">até domingo</mark></h2>
+        <div class="planos" role="group" aria-label="Planos de estudo até domingo">
+          <button type="button" class="plano-btn" data-area="MT" aria-controls="plano_painel">
+            <span class="plano-area">Matemática</span>
+            <span class="plano-meta" id="pb_mt">6 dias de estudo</span>
+            <span class="plano-seta" aria-hidden="true">→</span>
+          </button>
+          <button type="button" class="plano-btn" data-area="CN" aria-controls="plano_painel">
+            <span class="plano-area">Natureza</span>
+            <span class="plano-meta" id="pb_cn">6 dias de estudo</span>
+            <span class="plano-seta" aria-hidden="true">→</span>
+          </button>
+        </div>
       </div>
-    </section>
 
-    <!-- ============ PLANO + CTA ============ -->
-    <section class="etapa" id="etapa4" hidden>
       <div id="plano_painel" class="plano-painel" hidden>
         <h2 id="plano_titulo">Plano de <mark class="grifo">Matemática</mark></h2>
         <p class="aux">Marque até 5 assuntos em que você se sente fraco. O plano se ajusta à sua meta.</p>
@@ -175,7 +182,10 @@
           </details>
         </div>
       </div>
+    </section>
 
+    <!-- ============ PLANO + CTA ============ -->
+    <section class="etapa" id="etapa4" hidden>
       <div class="exatoo">
         <p>Treine exatamente esses assuntos no Exatoo.</p>
         <a id="btn_exatoo" href="https://exatoo.com" target="_blank" rel="noopener">exatoo.com →</a>
@@ -193,7 +203,7 @@
     </footer>
   </main>
 
-  <script src="assets/config.js"></script>
-  <script src="assets/app.js"></script>
+  <script src="assets/config.js?v=8"></script>
+  <script src="assets/app.js?v=8"></script>
 </body>
 </html>

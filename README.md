@@ -68,6 +68,8 @@ Requisitos: Python 3.10+ com `pandas` e `numpy` (`pip install pandas numpy openp
    1º/2º semestre) fica com o maior corte; cursos em que todas as modalidades têm corte 0 (menos
    inscritos que vagas) ficam fora da busca.
 
+Ao alterar `assets/*.js` ou `assets/style.css`, aumente o `?v=` no `index.html` (ex.: `?v=8` → `?v=9`) para os celulares baixarem a versão nova.
+
 Sem `data/cursos.json` o site continua funcionando: o aluno digita a nota de corte e os pesos manualmente.
 
 ## Testar localmente

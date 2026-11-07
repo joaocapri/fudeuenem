@@ -81,6 +81,15 @@
      O aluno pode deslocar a balança; cada acerto a mais em MT reduz o
      que precisa em CN (e vice-versa).
      =================================================================== */
+  // Acertos para cumprir uma nota MÍNIMA (eliminatória) com folga: usa o P25, ou seja,
+  // 3 em cada 4 participantes com esse nº de acertos ficaram acima do mínimo.
+  function acertosMinimo(area, nota) {
+    if (!nota) return 0;
+    const pct = S.tri.areas[area].pct;
+    for (let k = 0; k <= 45; k++) if (pct[k][1] >= nota) return k;
+    return Math.max(46, acertosDe(area, nota) + 1);
+  }
+
   function calcular() {
     const c = S.curso;
     const lc = clamp(+$('lc').value || 0, 0, 45), ch = clamp(+$('ch').value || 0, 0, 45);
@@ -88,37 +97,50 @@
     const p = c.pesos, wMT = p.MT || 0, wCN = p.CN || 0;
     const W = AREAS.reduce((s, a) => s + (p[a] || 0), 0);
     const LC = notaDe('LC', lc), CH = notaDe('CH', ch);
+    // 1) nota de corte: Σ(peso × nota) ≥ corte × Σpesos
     const falta = c.corte * W - ((p.LC || 0) * LC + (p.CH || 0) * CH + (p.RED || 0) * red);
+    // 2) notas mínimas por área (eliminatórias), com folga
     const minMT = (c.min && c.min.MT) || 0, minCN = (c.min && c.min.CN) || 0;
-    const R = { lc, ch, red, LC, CH, falta, wMT, wCN, kMT: null, kCN: null, kMin: 0, kMax: 0, k0: 0 };
+    const kMinMT = acertosMinimo('MT', minMT), kMinCN = acertosMinimo('CN', minCN);
+    // 3) média simples mínima: (LC + CH + CN + MT + RED) / 5 ≥ média  →  MT + CN ≥ somaMin
+    const somaMin = c.mediaMin ? 5 * c.mediaMin - (LC + CH + red) : -Infinity;
+    const R = { lc, ch, red, LC, CH, falta, wMT, wCN, minMT, minCN, kMinMT, kMinCN, kMT: null, kCN: null, kMin: 0, kMax: 0, k0: 0 };
+    const atende = (mt, cn) => wMT * mt + wCN * cn >= falta - 1e-6 && mt + cn >= somaMin - 1e-6;
 
     if (wMT && wCN) {
-      // ponto de equilíbrio por percentil (busca binária); se nem o topo basta, iguala acertos acima de 45
-      const soma = (pc) => wMT * notaNoPercentil('MT', pc) + wCN * notaNoPercentil('CN', pc);
+      // ponto de equilíbrio: mesma posição no ranking nacional nas duas áreas (busca binária)
       let k0;
-      if (falta <= soma(0)) k0 = 0;
-      else if (falta <= soma(100)) {
+      const mtP = (pc) => notaNoPercentil('MT', pc), cnP = (pc) => notaNoPercentil('CN', pc);
+      if (atende(mtP(0), cnP(0))) k0 = 0;
+      else if (atende(mtP(100), cnP(100))) {
         let lo = 0, hi = 100;
-        for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; if (soma(m) < falta) lo = m; else hi = m; }
-        k0 = acertosDe('MT', notaNoPercentil('MT', hi));
+        for (let i = 0; i < 40; i++) { const m = (lo + hi) / 2; if (atende(mtP(m), cnP(m))) hi = m; else lo = m; }
+        k0 = acertosDe('MT', mtP(hi));
       } else {
-        k0 = 45;
-        while (wMT * notaDe('MT', k0) + wCN * notaDe('CN', k0) < falta && k0 < 200) k0++;
+        k0 = 45; // nem o topo basta: iguala acertos acima de 45 (o "humor")
+        while (!atende(notaDe('MT', k0), notaDe('CN', k0)) && k0 < 200) k0++;
       }
       // limites da balança: de "MT no mínimo" até "CN no mínimo"
-      R.kMin = acertosDe('MT', minMT);
-      R.kMax = Math.max(R.kMin, acertosDe('MT', (falta - wCN * Math.max(notaDe('CN', 0), minCN)) / wMT));
+      const cnPiso = notaDe('CN', kMinCN);
+      R.kMin = kMinMT;
+      R.kMax = Math.max(R.kMin, acertosDe('MT', Math.max((falta - wCN * cnPiso) / wMT, somaMin - cnPiso)));
       R.k0 = clamp(k0, R.kMin, R.kMax);
       R.kMT = clamp(R.k0 + S.desvio, R.kMin, R.kMax);
-      const cnNota = Math.max((falta - wMT * notaDe('MT', R.kMT)) / wCN, minCN);
-      R.kCN = acertosDe('CN', cnNota);
+      const mt = notaDe('MT', R.kMT);
+      R.kCN = Math.max(acertosDe('CN', Math.max((falta - wMT * mt) / wCN, somaMin - mt)), kMinCN);
     } else if (wMT) {
-      R.kMT = acertosDe('MT', Math.max(falta / wMT, minMT));
-      if (minCN) R.kCN = acertosDe('CN', minCN);
+      // CN não tem peso; para a média mínima, supõe CN no mínimo exigido (ou na mediana nacional)
+      const cnRef = minCN ? notaDe('CN', kMinCN) : notaNoPercentil('CN', 50);
+      R.kMT = Math.max(acertosDe('MT', Math.max(falta / wMT, somaMin - cnRef)), kMinMT);
+      if (minCN) R.kCN = kMinCN;
     } else if (wCN) {
-      R.kCN = acertosDe('CN', Math.max(falta / wCN, minCN));
-      if (minMT) R.kMT = acertosDe('MT', minMT);
+      const mtRef = minMT ? notaDe('MT', kMinMT) : notaNoPercentil('MT', 50);
+      R.kCN = Math.max(acertosDe('CN', Math.max(falta / wCN, somaMin - mtRef)), kMinCN);
+      if (minMT) R.kMT = kMinMT;
     }
+    // a meta foi definida pelo mínimo do curso (e não pela nota de corte)?
+    R.porMinMT = kMinMT > 0 && R.kMT === kMinMT;
+    R.porMinCN = kMinCN > 0 && R.kCN === kMinCN;
     return R;
   }
 
@@ -162,16 +184,27 @@
     $('equilibrio_box').hidden = !temBalanca;
     if (temBalanca) { eq.min = 0; eq.max = R.kMax - R.kMin; eq.value = R.kMax - R.kMT; }
 
-    // uma linha só de observação, quando necessário
-    const obs = [];
+    // observações curtas: eliminação (vermelho), mínimos e média do curso
+    const NOME = { LC: 'Linguagens', CH: 'Humanas', RED: 'Redação' };
+    const alerta = [], obs = [];
     if (c.min) {
-      const fora = [['LC', R.LC], ['CH', R.CH], ['RED', R.red]].filter(([a, v]) => c.min[a] && v < c.min[a]);
-      for (const [a] of fora) obs.push(`mínimo de ${fmt0(c.min[a])} em ${{ LC: 'Linguagens', CH: 'Humanas', RED: 'Redação' }[a]}`);
+      for (const [a, v] of [['LC', R.LC], ['CH', R.CH], ['RED', R.red]]) {
+        if (c.min[a] && v < c.min[a]) alerta.push(`${NOME[a]} estimada (~${fmt0(v)}) abaixo do mínimo de ${fmt0(c.min[a])}: o curso elimina`);
+      }
     }
-    if (R.red === 0) obs.push('redação zerada elimina');
-    if (c.sobrou) obs.unshift((R.kMT || R.kCN) ? 'sobrou vaga em 2025: basta a nota mínima do curso' : 'sobrou vaga em 2025: você já passaria');
+    if (R.red === 0) alerta.push('redação zerada elimina');
+    if (R.minMT) obs.push(`mínimo em Matemática: ${fmt0(R.minMT)} (≥ ${R.kMinMT} acertos)`);
+    if (R.minCN) obs.push(`mínimo em Natureza: ${fmt0(R.minCN)} (≥ ${R.kMinCN} acertos)`);
+    if (c.mediaMin) obs.push(`média mínima do curso: ${fmt0(c.mediaMin)}`);
+    if (obs.length) obs[obs.length - 1] += ' · já incluído na meta';
+    if (c.sobrou) obs.unshift((R.kMT || R.kCN) ? 'sobrou vaga em 2025: basta cumprir o mínimo' : 'sobrou vaga em 2025: você já passaria');
     else if (R.kMT === 0 && R.kCN === 0) obs.push('com esse 1º dia, já daria');
-    $('r_aviso').textContent = obs.join(' · ');
+    $('r_aviso').innerHTML = [...alerta.map((x) => `<span class="alerta">${esc(x)}</span>`), ...obs.map(esc)].join('<br>');
+
+    // botões de plano mostram a meta de cada área
+    const metaTxt = (k) => k === null ? '6 dias de estudo' : k > 45 ? '6 dias · meta acima de 45' : `6 dias · meta de ${k} acertos`;
+    $('pb_mt').textContent = metaTxt(R.kMT);
+    $('pb_cn').textContent = metaTxt(R.kCN);
 
     S.ultimo = { ...R, curso: c };
     agendarCard();
@@ -536,7 +569,7 @@
     atualizarChips();
     $('plano_saida').hidden = true;
     $('plano_painel').hidden = false;
-    $('plano_painel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    requestAnimationFrame(() => $('plano_painel').scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   function atualizarChips() {

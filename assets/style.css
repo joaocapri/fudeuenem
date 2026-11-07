@@ -176,7 +176,8 @@ input[type=range]:active::-webkit-slider-thumb { background: var(--tinta); }
 /* ---------- grifo (marca-texto), instrução, aviso técnico, plano em imagem ---------- */
 mark.grifo { color: inherit; padding: 0 .06em; background: linear-gradient(transparent 56%, var(--marca) 56%, var(--marca) 92%, transparent 92%); }
 .instrucao { margin: 0; font-size: 17px; line-height: 1.35; }
-.disclaimer { margin: 0; padding-top: 12px; border-top: 1px solid var(--linha); font-family: var(--f-mono); font-size: 11px; line-height: 1.6; color: var(--tinta-2); }
+.disclaimer { margin: 0; padding: 10px 0 0 16px; border-top: 1px solid var(--linha); font-family: var(--f-mono); font-size: 10.5px; line-height: 1.55; color: var(--tinta-2); }
+.disclaimer li { margin: 1px 0; }
 .disclaimer b { color: var(--tinta); font-weight: 600; }
 #plano_saida { display: flex; flex-direction: column; gap: 14px; }
 #plano_img { display: block; width: 100%; max-width: 320px; margin: 0 auto; aspect-ratio: 9 / 16; border: 1px solid var(--linha); background: #fafafa; }
@@ -193,21 +194,28 @@ mark.grifo { color: inherit; padding: 0 .06em; background: linear-gradient(trans
 .dica-arraste .seta:last-child { animation-direction: reverse; }
 @keyframes vaivem { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
 
-.planos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 320px; width: 100%; margin: 0 auto; }
+.planos-bloco { display: flex; flex-direction: column; gap: 14px; margin-top: 12px; }
+.planos-tit { margin: 0; font: 850 26px/1.08 var(--f-display); font-stretch: 85%; text-wrap: balance; }
+.planos { display: flex; flex-direction: column; gap: 12px; }
 .plano-btn {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; cursor: pointer;
-  background: var(--papel); color: var(--tinta); border: 2px solid var(--tinta); border-radius: 8px; padding: 12px 12px 14px;
+  display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; align-items: center; gap: 2px 12px;
+  width: 100%; text-align: left; cursor: pointer; color: var(--tinta);
+  background: var(--marca); border: 2px solid var(--tinta); border-radius: 10px; padding: 14px 16px;
+  box-shadow: 4px 4px 0 var(--tinta); transition: transform .08s ease, box-shadow .08s ease;
 }
-.plano-btn .plano-sub { font-family: var(--f-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-2); }
-.plano-btn .plano-area { font: 850 20px/1.1 var(--f-display); font-stretch: 85%; }
-.plano-btn .plano-sub { display: flex; justify-content: space-between; width: 100%; }
-.plano-btn .plano-sub::after { content: "→"; font-size: 14px; color: var(--tinta); }
-.plano-btn:hover .plano-area, .plano-btn.ativo .plano-area {
-  background: linear-gradient(transparent 56%, var(--marca) 56%, var(--marca) 92%, transparent 92%);
+.plano-btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--tinta); }
+.plano-btn .plano-area { font: 850 26px/1.05 var(--f-display); font-stretch: 85%; }
+.plano-btn .plano-meta { grid-column: 1; font-family: var(--f-mono); font-size: 12px; font-weight: 600; }
+.plano-btn .plano-seta {
+  grid-column: 2; grid-row: 1 / span 2; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%;
+  background: var(--tinta); color: var(--marca); font-size: 20px; transition: transform .2s ease;
 }
-.plano-btn.ativo { box-shadow: 4px 4px 0 var(--tinta); }
+.plano-btn.ativo { background: var(--tinta); color: var(--papel); box-shadow: 4px 4px 0 var(--marca); }
+.plano-btn.ativo .plano-seta { background: var(--marca); color: var(--tinta); transform: rotate(90deg); }
 
 .plano-painel { display: flex; flex-direction: column; gap: 14px; border-top: 2px solid var(--tinta); padding-top: 14px; }
 .plano-painel[hidden] { display: none; }
 .plano-painel h2 { margin: 0; font: 850 28px/1.05 var(--f-display); font-stretch: 85%; }
 @media (prefers-reduced-motion: reduce) { .dica-arraste .seta { animation: none; } }
+
+.nota-rodape .alerta { color: var(--estouro); font-weight: 600; }
