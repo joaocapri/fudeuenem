@@ -112,7 +112,7 @@
     <!-- ============ ETAPA 2: REDAÇÃO + BALANÇA ============ -->
     <section class="etapa" id="etapa2" hidden>
       <div class="redacao">
-        <label class="rot" for="red">Redação</label>
+        <label class="pergunta" for="red">Quanto você acha que tirou na <mark class="grifo">redação</mark>?</label>
         <output id="red_v" for="red">720</output>
         <input type="range" id="red" min="0" max="1000" step="20" value="720">
       </div>
@@ -134,7 +134,8 @@
 
       <div class="equilibrio" id="equilibrio_box">
         <input type="range" id="equilibrio" min="0" max="10" value="5" aria-label="Equilíbrio entre Matemática e Natureza">
-        <div class="pontas"><span>mais Matemática</span><span>mais Natureza</span></div>
+        <div class="pontas"><span>← mais Matemática</span><span>mais Natureza →</span></div>
+        <p class="dica-arraste"><span class="seta">⟵</span> arraste para trocar acertos entre as áreas <span class="seta">⟶</span></p>
       </div>
       <p class="nota-rodape" id="r_aviso"></p>
       <p class="disclaimer"><b>Valores estimados.</b> A conversão acertos → nota usa a mediana das notas dos participantes com o mesmo número de acertos nos microdados do ENEM 2024 e 2025 (Inep). Na TRI, a nota não depende só da quantidade de acertos: depende de quais itens foram acertados (parâmetros de dificuldade, discriminação e acerto ao acaso) e da coerência do padrão de respostas. O mesmo número de acertos pode resultar em notas diferentes, em geral com variação de dezenas de pontos. As notas de corte são do Sisu 2025 e mudam a cada edição. O resultado não garante aprovação.</p>
@@ -145,24 +146,35 @@
       <img id="story_img" alt="Card com a sua meta para postar no story">
       <button type="button" class="acao" id="btn_share">Compartilhar</button>
       <p class="aux centro">ou toque e segure na imagem para salvar</p>
+
+      <div class="planos" role="group" aria-label="Planos de estudo até domingo">
+        <button type="button" class="plano-btn" data-area="MT" aria-controls="plano_painel">
+          <span class="plano-sub">plano até domingo</span>
+          <span class="plano-area">Matemática</span>
+        </button>
+        <button type="button" class="plano-btn" data-area="CN" aria-controls="plano_painel">
+          <span class="plano-sub">plano até domingo</span>
+          <span class="plano-area">Natureza</span>
+        </button>
+      </div>
     </section>
 
     <!-- ============ PLANO + CTA ============ -->
     <section class="etapa" id="etapa4" hidden>
-      <details id="plano_box">
-        <summary>Plano de <mark class="grifo">Matemática</mark> até domingo</summary>
+      <div id="plano_painel" class="plano-painel" hidden>
+        <h2 id="plano_titulo">Plano de <mark class="grifo">Matemática</mark></h2>
         <p class="aux">Marque até 5 assuntos em que você se sente fraco. O plano se ajusta à sua meta.</p>
         <div class="chips" id="topicos"></div>
         <button type="button" class="acao sec" id="btn_plano">Montar meu plano</button>
         <div id="plano_saida" hidden>
-          <img id="plano_img" alt="Imagem do seu plano de Matemática de 09 a 14/11">
+          <img id="plano_img" alt="Imagem do seu plano de estudos de 09 a 14/11">
           <button type="button" class="acao" id="btn_plano_baixar">Baixar plano</button>
           <details class="plano-texto">
             <summary>Ver o plano em texto</summary>
             <div id="plano"></div>
           </details>
         </div>
-      </details>
+      </div>
 
       <div class="exatoo">
         <p>Treine exatamente esses assuntos no Exatoo.</p>
