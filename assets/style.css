@@ -219,3 +219,30 @@ mark.grifo { color: inherit; padding: 0 .06em; background: linear-gradient(trans
 @media (prefers-reduced-motion: reduce) { .dica-arraste .seta { animation: none; } }
 
 .nota-rodape .alerta { color: var(--estouro); font-weight: 600; }
+
+/* ---------- fichas numeradas (só nos 3 passos) e botões táteis ----------
+   Mesmo tratamento dos botões de plano: borda preta, sombra deslocada e
+   etiqueta amarela. Usado apenas onde a ordem é informação (1 → 2 → 3). */
+.etapa { gap: 34px; }
+.bloco {
+  position: relative; display: flex; flex-direction: column; gap: 22px;
+  background: var(--papel); border: 2px solid var(--tinta); border-radius: 10px;
+  padding: 30px 16px 18px; box-shadow: 4px 4px 0 var(--tinta);
+}
+.bloco-tab {
+  position: absolute; top: -14px; left: 12px; margin: 0;
+  background: var(--marca); color: var(--tinta); border: 2px solid var(--tinta); border-radius: 6px;
+  font: 600 11px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; padding: 6px 9px;
+}
+.bloco .manual { border-top: 1px dashed #cfcfcf; padding-top: 14px; }
+.bloco .redacao .pergunta { font-size: 17px; }
+.bloco .ctl input { font-size: 40px; }
+
+.acao.tatil {
+  background: var(--marca); color: var(--tinta); border: 2px solid var(--tinta); border-radius: 10px;
+  box-shadow: 4px 4px 0 var(--tinta); font-weight: 800; transition: transform .08s ease, box-shadow .08s ease;
+}
+.acao.tatil:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--tinta); }
+.acao.tatil:disabled { background: #f2f2f2; color: #a3a3a3; border-color: #d4d4d4; box-shadow: none; }
+.acao.tatil.escuro { background: var(--tinta); color: var(--papel); box-shadow: 4px 4px 0 var(--marca); }
+.acao.tatil.escuro:active { box-shadow: 1px 1px 0 var(--marca); }

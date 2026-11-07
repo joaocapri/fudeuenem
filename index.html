@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=8">
+  <link rel="stylesheet" href="assets/style.css?v=9">
 
   <!-- ===== ANALYTICS: cole aqui o script do seu analytics gratuito
        (ex.: GoatCounter, Umami Cloud, Cloudflare Web Analytics ou Google Analytics).
@@ -33,6 +33,8 @@
     <!-- ============ ETAPA 1: 1º DIA + CURSO ============ -->
     <section class="etapa" id="etapa1">
       <p class="instrucao">Coloque quantas questões você <mark class="grifo">acertou no 1º dia</mark> e escolha o curso.</p>
+      <div class="bloco">
+        <p class="bloco-tab">1 · Seu 1º dia</p>
       <div class="dupla">
         <div class="contador">
           <label class="rot" for="lc">Linguagens</label>
@@ -53,7 +55,10 @@
           <p class="aux" id="ch_est">acertos de 45</p>
         </div>
       </div>
+      </div>
 
+      <div class="bloco">
+        <p class="bloco-tab">2 · Seu curso</p>
       <div id="busca_box">
         <div class="campo" id="ies_box">
           <label class="rot" for="ies_busca">Faculdade</label>
@@ -97,10 +102,11 @@
           <label>RED<input type="number" class="m_min" data-a="RED" min="0" max="1000"></label>
         </div>
         <p class="erro" id="m_erro" role="alert"></p>
-        <button type="button" class="acao" id="m_usar">Ver minha meta</button>
+        <button type="button" class="acao tatil" id="m_usar">Ver minha meta</button>
       </details>
+      </div>
 
-      <button type="button" class="acao" id="btn_ok" disabled>Ver minha meta</button>
+      <button type="button" class="acao tatil" id="btn_ok" disabled>Ver minha meta</button>
     </section>
 
     <!-- Resumo depois do OK -->
@@ -111,10 +117,13 @@
 
     <!-- ============ ETAPA 2: REDAÇÃO + BALANÇA ============ -->
     <section class="etapa" id="etapa2" hidden>
+      <div class="bloco">
+        <p class="bloco-tab">3 · Sua redação</p>
       <div class="redacao">
         <label class="pergunta" for="red">Quanto você acha que tirou na <mark class="grifo">redação</mark>?</label>
         <output id="red_v" for="red">720</output>
         <input type="range" id="red" min="0" max="1000" step="20" value="720">
+      </div>
       </div>
 
       <div class="balanca" id="balanca" aria-live="polite">
@@ -149,7 +158,7 @@
     <!-- ============ ETAPA 3: CARD ============ -->
     <section class="etapa share" id="etapa3" hidden>
       <img id="story_img" alt="Card com a sua meta para postar no story">
-      <button type="button" class="acao" id="btn_share">Compartilhar</button>
+      <button type="button" class="acao tatil escuro" id="btn_share">Compartilhar</button>
       <p class="aux centro">ou toque e segure na imagem para salvar</p>
 
       <div class="planos-bloco">
@@ -203,7 +212,7 @@
     </footer>
   </main>
 
-  <script src="assets/config.js?v=8"></script>
-  <script src="assets/app.js?v=8"></script>
+  <script src="assets/config.js?v=9"></script>
+  <script src="assets/app.js?v=9"></script>
 </body>
 </html>
