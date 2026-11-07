@@ -43,18 +43,18 @@ Requisitos: Python 3.10+ com `pandas` e `numpy` (`pip install pandas numpy openp
 
 ### Tabela TRI (microdados do ENEM)
 
-1. Baixe os microdados das 2 edições mais recentes em
+1. Baixe os microdados das 4 edições mais recentes em
    <https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem>
    (links diretos: `https://download.inep.gov.br/microdados/microdados_enem_AAAA.zip`).
 2. Rode (não precisa descompactar):
    ```bash
-   python3 scripts/processa_tri.py raw/microdados_enem_2025.zip raw/microdados_enem_2024.zip
+   python3 scripts/processa_tri.py raw/microdados_enem_2025.zip raw/microdados_enem_2024.zip raw/microdados_enem_2023.zip raw/microdados_enem_2022.zip
    ```
 3. O script conta os acertos de cada participante comparando `TX_RESPOSTAS_xx` com
    `TX_GABARITO_xx` (o gabarito já é o da cor da prova do participante). Em LC, monta o gabarito
    de 45 itens a partir de `TP_LINGUA` (inglês/espanhol). Para cada nº de acertos, calcula
-   P10, P25, P50, P75 e P90 da nota. O site mostra a faixa **P25–P75** e usa a **mediana (P50)** no inverso
-   (nota → acertos).
+   P10, P25, P50, P75 e P90 da nota, por edição. As edições são combinadas por média ponderada (mais peso
+   para as recentes). O site usa a **mediana (P50)** e mostra uma faixa que junta P25–P75 com a variação entre anos.
 
 ### Notas de corte, pesos e mínimos (SISU)
 
@@ -110,7 +110,7 @@ Para atualizar o site, basta enviar as alterações para a `main`: o Pages repub
 
 | Dado | Fonte | Edição |
 |---|---|---|
-| Acertos → nota TRI; distribuição de notas | Microdados do ENEM — Inep — <https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem> | ENEM 2024 e ENEM 2025 |
+| Acertos → nota TRI; distribuição de notas | Microdados do ENEM — Inep — <https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem> | ENEM 2022, 2023, 2024 e 2025 (pesos 1:2:3:4, mais recente pesa mais) |
 | Notas de corte, pesos, notas mínimas | Planilhas oficiais do Sisu (vagas ofertadas; inscrições e notas de corte) — MEC — <https://www.gov.br/mec/pt-br/sisu/relatorios> | Sisu 2025 (5.778 cursos, 124 instituições) |
 
 ## Como o cálculo funciona

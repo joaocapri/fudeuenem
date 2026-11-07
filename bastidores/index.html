@@ -80,8 +80,6 @@
     .fluxo::before, .fluxo::after { content: ""; position: absolute; left: 0; right: 0; height: 40px; z-index: 1; pointer-events: none; }
     .fluxo::before { top: 0; background: linear-gradient(var(--fundo-2), transparent); }
     .fluxo::after { bottom: 0; background: linear-gradient(transparent, var(--fundo-2)); }
-    .fluxo .trilho { animation: sobe 90s linear infinite; }
-    @keyframes sobe { to { transform: translateY(-50%); } }
     .curso { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 9px 12px; border-bottom: 1px solid var(--linha); font-family: var(--f-m); }
     .curso .k { font: 700 13px var(--f-d); color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .curso .c { font-size: 13px; color: var(--marca); font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -112,7 +110,6 @@
     #gravar { position: fixed; z-index: 5; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
       font: 700 13px var(--f-m); color: var(--fundo); background: var(--marca); border: 2px solid var(--txt); border-radius: 99px; padding: 11px 16px; box-shadow: 3px 3px 0 var(--txt); cursor: pointer; }
     body.gravando #gravar { opacity: .15; }
-    @media (prefers-reduced-motion: reduce) { .fluxo .trilho { animation-duration: 400s; } }
   </style>
 </head>
 <body>
@@ -126,13 +123,13 @@
     <section>
       <p class="rot"><span class="ao-vivo">processado</span></p>
       <h2>A nossa <mark>base de dados</mark></h2>
-      <p class="sub">Tudo oficial: microdados do ENEM 2024 e 2025 (Inep) e as planilhas do Sisu 2025 (MEC).</p>
+      <p class="sub">Tudo oficial: microdados do ENEM de 2022 a 2025 (Inep) e as planilhas do Sisu 2025 (MEC).</p>
     </section>
 
     <section class="contadores">
-      <div class="cont grande"><div class="n" data-alvo="1159143300">0</div><div class="d">respostas comparadas, uma a uma, com o gabarito de cada cor de prova</div></div>
-      <div class="cont"><div class="n" data-alvo="6621182">0</div><div class="d">participantes do ENEM analisados</div></div>
-      <div class="cont"><div class="n" data-alvo="25758740">0</div><div class="d">provas corrigidas (LC, CH, CN e MT)</div></div>
+      <div class="cont grande"><div class="n" data-alvo="2089723005">0</div><div class="d">respostas comparadas, uma a uma, com o gabarito de cada cor de prova</div></div>
+      <div class="cont"><div class="n" data-alvo="11933329">0</div><div class="d">participantes do ENEM analisados (2022 a 2025)</div></div>
+      <div class="cont"><div class="n" data-alvo="46438289">0</div><div class="d">provas corrigidas (LC, CH, CN e MT)</div></div>
       <div class="cont"><div class="n" data-alvo="6180">0</div><div class="d">cursos do Sisu</div></div>
       <div class="cont"><div class="n" data-alvo="124">0</div><div class="d">universidades e institutos</div></div>
       <div class="cont"><div class="n" data-alvo="47095">0</div><div class="d">notas de corte por modalidade</div></div>
@@ -150,7 +147,7 @@
     <section>
       <p class="rot">02 · tabela TRI</p>
       <h2>Acertos → <mark>nota</mark></h2>
-      <p class="sub">Mediana da nota de quem teve cada número de acertos (0 a 45), em cada área.</p>
+      <p class="sub">Mediana da nota de quem teve cada número de acertos (0 a 45), em cada área, combinando 4 edições com mais peso para as recentes.</p>
       <div class="calor" id="calor" style="margin-top:14px"></div>
       <div class="legenda"><span id="leg_min">300</span><span class="barra"></span><span id="leg_max">960</span></div>
     </section>
@@ -167,7 +164,7 @@
     <section>
       <p class="rot">04 · cursos.json</p>
       <h2>Corte, pesos e <mark>mínimos</mark></h2>
-      <div class="fluxo" style="margin-top:14px"><div class="trilho" id="trilho"></div></div>
+      <div class="fluxo" id="fluxo" style="margin-top:14px"><div class="trilho" id="trilho"><div class="curso"><span class="k">carregando cursos…</span></div></div></div>
     </section>
 
     <section class="formulas">
@@ -226,17 +223,24 @@
 
     /* terminal: reproduz o log real do processamento dos microdados */
     const LOG = [
-      ['cmd', '$ python3 scripts/processa_tri.py microdados_enem_2025.zip microdados_enem_2024.zip'],
+      ['cmd', '$ python3 scripts/processa_tri.py enem_2025.zip enem_2024.zip enem_2023.zip enem_2022.zip'],
       ['dim', '[microdados_enem_2025.zip] RESULTADOS_2025.csv · 2,1 GB · Deflate64 → unzip -p'],
       ...Array.from({ length: 9 }, (_, i) => ['', `  bloco ${i + 1}: 400.000 linhas · acertos LC/CH/CN/MT calculados`]),
       ['ok', '  2025 LC: n=3.455.194  corr(acertos, nota)=0.957'],
-      ['ok', '  2025 CH: n=3.448.468  corr(acertos, nota)=0.959'],
-      ['ok', '  2025 CN: n=3.259.561  corr(acertos, nota)=0.926'],
       ['ok', '  2025 MT: n=3.259.443  corr(acertos, nota)=0.943'],
       ['dim', '[microdados_enem_2024.zip] RESULTADOS_2024.csv · 1,7 GB'],
       ...Array.from({ length: 8 }, (_, i) => ['', `  bloco ${i + 1}: 400.000 linhas · acertos LC/CH/CN/MT calculados`]),
       ['ok', '  2024 LC: n=3.165.988  corr(acertos, nota)=0.963'],
       ['ok', '  2024 MT: n=3.004.169  corr(acertos, nota)=0.917'],
+      ['dim', '[microdados_enem_2023.zip] MICRODADOS_ENEM_2023.csv · 1,8 GB'],
+      ...Array.from({ length: 10 }, (_, i) => ['', `  bloco ${i + 1}: 400.000 linhas · acertos LC/CH/CN/MT calculados`]),
+      ['ok', '  2023 LC: n=2.820.474  corr(acertos, nota)=0.967'],
+      ['ok', '  2023 MT: n=2.675.789  corr(acertos, nota)=0.938'],
+      ['dim', '[microdados_enem_2022.zip] MICRODADOS_ENEM_2022.csv'],
+      ...Array.from({ length: 9 }, (_, i) => ['', `  bloco ${i + 1}: 400.000 linhas · acertos LC/CH/CN/MT calculados`]),
+      ['ok', '  2022 LC: n=2.491.673  corr(acertos, nota)=0.966'],
+      ['ok', '  2022 MT: n=2.354.852  corr(acertos, nota)=0.900'],
+      ['', '  combinando edições · pesos 2025:0,4 · 2024:0,3 · 2023:0,2 · 2022:0,1'],
       ['', '  validação TP_LINGUA: 48,6% acerto (regra) × 18,8% (invertida) ✓'],
       ['ok', 'OK → data/tri_tabela.json, data/distribuicao.json'],
       ['cmd', '$ python3 scripts/processa_sisu.py --vagas vagas_2025.xlsx --corte cortes_2025.xlsx'],
@@ -262,8 +266,7 @@
     Promise.all([
       fetch('../data/tri_tabela.json').then((r) => r.json()),
       fetch('../data/distribuicao.json').then((r) => r.json()),
-      fetch('../data/cursos.json').then((r) => r.json()),
-    ]).then(([tri, dist, cursos]) => {
+    ]).then(([tri, dist]) => {
       // mapa de calor: 4 áreas × 46 colunas (0 a 45 acertos)
       const areas = ['LC', 'CH', 'CN', 'MT'];
       const todos = areas.flatMap((a) => tri.areas[a].pct.map((l) => l[2]));
@@ -290,16 +293,33 @@
       svg += `<text x="${x0}" y="197" fill="#8d8d8d" font-size="9" font-family="IBM Plex Mono">percentil 0</text><text x="${W - 6}" y="197" fill="#8d8d8d" font-size="9" font-family="IBM Plex Mono" text-anchor="end">100</text>`;
       $('dist').innerHTML = svg;
 
-      // fluxo de cursos reais (amostra aleatória, repetida para o loop contínuo)
-      const C = cursos.cursos, mods = cursos.modalidades;
-      const am = Array.from({ length: 70 }, () => C[Math.floor(Math.random() * C.length)]).filter((r) => r.o[0][1] > 0);
-      const MIN = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'na', 'no', 'a', 'o', 'para', 'com']);
-      const tit = (s) => s.toLowerCase().split(' ').map((w, i) => (i && MIN.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-      const linha = (r) => `<div class="curso"><span class="k">${esc(tit(r.k))} · ${esc(r.s)}</span><span class="c">${r.o[0][1].toFixed(2).replace('.', ',')}</span>
-        <span class="m">${esc(r.m)}/${esc(r.u)} · pesos ${r.p.join('·')}${r.mn ? ' · mín ' + r.mn.filter(Boolean).join('/') : ''} · ${r.o.length} modalidades</span></div>`;
-      const bloco = am.map(linha).join('');
-      $('trilho').innerHTML = bloco + bloco;
     }).catch(() => {});
+
+    /* fluxo de cursos reais (amostra aleatória), rolando por JavaScript */
+    function carregarCursos(tentativa) {
+      fetch('../data/cursos.json', { cache: 'no-cache' }).then((r) => r.json()).then((cursos) => {
+        const C = cursos.cursos;
+        const am = Array.from({ length: 70 }, () => C[Math.floor(Math.random() * C.length)]).filter((r) => r.o[0][1] > 0);
+        const MIN = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'na', 'no', 'a', 'o', 'para', 'com']);
+        const tit = (x) => x.toLowerCase().split(' ').map((w, i) => (i && MIN.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+        const linha = (r) => `<div class="curso"><span class="k">${esc(tit(r.k))} · ${esc(r.s)}</span><span class="c">${r.o[0][1].toFixed(2).replace('.', ',')}</span>
+          <span class="m">${esc(r.m)}/${esc(r.u)} · pesos ${r.p.join('·')}${r.mn ? ' · mín ' + r.mn.filter(Boolean).join('/') : ''} · ${r.o.length} modalidades</span></div>`;
+        const bloco = am.map(linha).join('');
+        $('trilho').innerHTML = bloco + bloco;
+        const caixa = $('fluxo');
+        let ativo = false;
+        new IntersectionObserver((es) => { ativo = es[0].isIntersecting; }, { threshold: 0.1 }).observe(caixa);
+        const tick = () => {
+          if (ativo) {
+            caixa.scrollTop += 0.7;
+            if (caixa.scrollTop >= caixa.scrollHeight / 2) caixa.scrollTop = 0; // volta ao início sem salto (lista duplicada)
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }).catch(() => { if ((tentativa || 0) < 3) setTimeout(() => carregarCursos((tentativa || 0) + 1), 1500); });
+    }
+    carregarCursos(0);
 
     /* código real do site, com destaque de sintaxe simples */
     const KW_JS = /\b(const|let|function|return|if|else|for|of|while|await|async|new|try|catch|true|false|null)\b/;

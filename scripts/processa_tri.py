@@ -4,11 +4,13 @@ processa_tri.py — Gera a tabela "acertos → nota TRI" e a distribuição de n
 a partir dos MICRODADOS OFICIAIS DO ENEM (Inep).
 
 Uso:
-    python3 scripts/processa_tri.py raw/microdados_enem_2025.zip raw/microdados_enem_2024.zip
+    python3 scripts/processa_tri.py raw/microdados_enem_2025.zip raw/microdados_enem_2024.zip \
+        raw/microdados_enem_2023.zip raw/microdados_enem_2022.zip
 
 Saídas (em data/):
     tri_tabela.json              -> percentis P10/P25/P50/P75/P90 da nota para cada nº de acertos
-                                    (edições somadas), por área LC/CH/CN/MT. É o que o site usa.
+                                    (média ponderada das edições, mais peso às recentes: 4:3:2:1)
+                                    + "anos": menor e maior mediana entre as edições. É o que o site usa.
     tri_tabela_por_edicao.json   -> a mesma tabela separada por edição (transparência/conferência)
     distribuicao.json            -> percentis P0..P100 da nota de cada área (inclusive redação)
                                     na edição MAIS RECENTE informada (selo de viabilidade)
@@ -45,7 +47,8 @@ def abrir_resultados(caminho_zip):
     edições antigas: MICRODADOS_ENEM_AAAA.csv)."""
     z = zipfile.ZipFile(caminho_zip)
     nomes = [n for n in z.namelist() if n.lower().endswith(".csv")]
-    alvo = [n for n in nomes if "RESULTADOS_" in n.upper()] or [n for n in nomes if "MICRODADOS_ENEM" in n.upper()]
+    base = lambda n: n.rsplit("/", 1)[-1].upper()   # só o nome do arquivo (a pasta também se chama microdados_enem_AAAA)
+    alvo = [n for n in nomes if base(n).startswith("RESULTADOS_")] or [n for n in nomes if base(n).startswith("MICRODADOS_ENEM")]
     if not alvo:
         raise SystemExit(f"CSV de resultados não encontrado em {caminho_zip}: {nomes}")
     return z, alvo[0]
@@ -144,20 +147,34 @@ def main(zips):
     fonte = (f"Microdados do ENEM {', '.join(map(str, sorted(anos)))} — Inep "
              f"(https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/enem)")
 
-    # Tabela somando as edições
-    tri = {"fonte": fonte, "edicoes": sorted(anos), "gerado_em": date.today().isoformat(),
-           "percentis": PCTS, "areas": {}}
+    # Tabela de cada edição
     por_ed = {"fonte": fonte, "percentis": PCTS, "edicoes": {}}
-    for a in AREAS:
-        ac = np.concatenate([e[1][a][0] for e in edicoes])
-        nt = np.concatenate([e[1][a][1] for e in edicoes])
-        p, n = tabela(ac, nt)
-        tri["areas"][a] = {"pct": p, "n": n}
     for ano, res in edicoes:
         por_ed["edicoes"][str(ano)] = {}
         for a in AREAS:
             p, n = tabela(*res[a])
             por_ed["edicoes"][str(ano)][a] = {"pct": p, "n": n}
+
+    # Tabela combinada: média PONDERADA dos percentis de cada edição, com mais peso
+    # para as mais recentes (pesos 4:3:2:1 do ano mais novo ao mais antigo). Assim a
+    # prova de um ano atípico não domina, e as provas mais parecidas com a atual pesam mais.
+    # "anos" guarda a menor e a maior mediana entre as edições: é a variação causada
+    # pela dificuldade de cada prova (o site usa para mostrar uma faixa honesta).
+    pesos_brutos = [max(1, 4 - i) for i in range(len(anos))]          # anos já em ordem decrescente
+    pesos = {str(ano): w / sum(pesos_brutos) for ano, w in zip(anos, pesos_brutos)}
+    tri = {"fonte": fonte, "edicoes": sorted(anos), "pesos": {k: round(v, 3) for k, v in pesos.items()},
+           "gerado_em": date.today().isoformat(), "percentis": PCTS, "areas": {}}
+    for a in AREAS:
+        mats = {ano: np.array(por_ed["edicoes"][ano][a]["pct"]) for ano in pesos}
+        comb = sum(pesos[ano] * m for ano, m in mats.items())
+        comb = np.maximum.accumulate(comb, axis=0)
+        medianas = np.stack([m[:, 2] for m in mats.values()])
+        n = [sum(por_ed["edicoes"][ano][a]["n"][k] for ano in pesos) for k in range(46)]
+        tri["areas"][a] = {
+            "pct": [[round(float(v), 1) for v in linha] for linha in comb],
+            "anos": [[round(float(lo), 1), round(float(hi), 1)] for lo, hi in zip(medianas.min(0), medianas.max(0))],
+            "n": n,
+        }
 
     # Distribuição nacional (edição mais recente)
     ano_rec, res_rec = edicoes[0]
@@ -178,7 +195,7 @@ def main(zips):
     # Resumo legível para conferência
     for a in AREAS:
         t = tri["areas"][a]
-        print(a, " ".join(f"{k}:{t['pct'][k][2]:.0f}" for k in (5, 10, 15, 20, 25, 30, 35, 40, 45)))
+        print(a, " ".join(f"{k}:{t['pct'][k][2]:.0f}[{t['anos'][k][0]:.0f}-{t['anos'][k][1]:.0f}]" for k in (5, 10, 15, 20, 25, 30, 35, 40, 45)))
 
 
 if __name__ == "__main__":

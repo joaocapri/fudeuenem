@@ -69,9 +69,13 @@
     return 45 + Math.ceil((nota - p[45]) / inclinacao(area));
   }
 
+  // Faixa estimada: junta a variação entre alunos (P25–P75) com a variação entre
+  // anos (menor e maior mediana entre as edições), que vem da dificuldade de cada prova.
   function faixa(area, k) {
-    const [, p25, , p75] = S.tri.areas[area].pct[clamp(k, 0, 45)];
-    return [p25, p75];
+    const t = S.tri.areas[area], i = clamp(k, 0, 45);
+    const [, p25, , p75] = t.pct[i];
+    const [aMin, aMax] = t.anos ? t.anos[i] : [p25, p75];
+    return [Math.min(p25, aMin), Math.max(p75, aMax)];
   }
 
   // Nota no percentil p (0..100) da distribuição nacional
@@ -486,7 +490,7 @@
     const yAviso = fimBloco + 95 + lCurso.length * 72;
     ['Valores estimados. Na TRI, a nota depende de quais itens você',
      'acerta e da coerência das respostas, não só do nº de acertos.',
-     'Base: microdados ENEM 2024–2025 (Inep) e cortes Sisu 2025 (MEC).']
+     `Base: microdados ENEM ${S.tri.edicoes[0]}–${S.tri.edicoes[S.tri.edicoes.length - 1]} (Inep) e cortes Sisu 2025 (MEC).`]
       .forEach((l, i) => ctx.fillText(l, M, yAviso + i * 32));
 
     // rodapé: assinatura + site com marca-texto
@@ -864,7 +868,8 @@
       return;
     }
     S.tri = tri.value; S.dist = dist.value;
-    const fontes = [`Notas: microdados do ENEM ${S.tri.edicoes.join(' e ')} (Inep)`];
+    const ed = S.tri.edicoes, anosTxt = ed.length > 2 ? `de ${ed[0]} a ${ed[ed.length - 1]}` : ed.join(' e ');
+    const fontes = [`Notas: microdados do ENEM ${anosTxt} (Inep)`];
     if (cursos.status === 'fulfilled' && cursos.value.cursos && cursos.value.cursos.length) {
       S.cursos = cursos.value; prepararBase();
       fontes.push(`cortes e pesos: ${S.cursos.meta.edicao_corte} (MEC), ${S.cursos.cursos.length.toLocaleString('pt-BR')} cursos`);
