@@ -260,3 +260,6 @@ mark.grifo { color: inherit; padding: 0 .06em; background: linear-gradient(trans
 html { touch-action: manipulation; }
 button, a, input, select, label, .chip, .plano-btn { touch-action: manipulation; }
 .pm { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+
+.logo-textos { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.logo-sub { font: 600 10px/1.2 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-2); white-space: nowrap; }
