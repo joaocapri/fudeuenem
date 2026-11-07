@@ -363,11 +363,23 @@
 
   function carregarFontes() {
     if (!fontesProntas) {
-      fontesProntas = (document.fonts && document.fonts.load)
+      const fontes = (document.fonts && document.fonts.load)
         ? Promise.all(['850 300px Archivo', '700 60px Archivo', '600 30px "IBM Plex Mono"'].map((f) => document.fonts.load(f))).catch(() => {})
         : Promise.resolve();
+      // ícone da marca (desenhado no canto dos cards); se falhar, os cards saem sem ele
+      const icone = new Promise((ok) => {
+        const img = new Image();
+        img.onload = () => { S.icone = img; ok(); };
+        img.onerror = () => ok();
+        img.src = 'assets/icone.svg';
+      });
+      fontesProntas = Promise.all([fontes, icone]);
     }
     return fontesProntas;
+  }
+  // desenha o ícone da marca no canto inferior direito de um card 1080×1920
+  function desenharIcone(ctx, x, y, tam) {
+    if (S.icone) { try { ctx.drawImage(S.icone, x, y, tam, tam); } catch (e) { /* segue sem ícone */ } }
   }
 
   function quebrar(ctx, txt, maxW) {
@@ -483,6 +495,7 @@
     ctx.font = `600 34px ${MONO}`;
     ctx.fillText(`Prof. João Capri ${CFG.ARROBA || ''}`.trim(), M, 1745);
     ctx.font = `850 64px ${D}`;
+    desenharIcone(ctx, 1080 - M - 190, 1660, 190);
     marca(CFG.SITE || '', M, 1835, 64);
     ctx.fillStyle = TINTA; ctx.fillText(CFG.SITE || '', M, 1835);
 
@@ -682,6 +695,7 @@
     ctx.fillText('09 A 14/11 · ATÉ A PROVA DE 15/11', M, 140);
     ctx.font = `850 118px ${D}`;
     ctx.fillText('PLANO DE', M, 275);
+    desenharIcone(ctx, W - M - 135, 128, 135);
     const area = P.nome.toUpperCase();
     let ta = 118;
     while (ctx.measureText(area).width > W - 2 * M && ta > 70) { ta -= 4; ctx.font = `850 ${ta}px ${D}`; }

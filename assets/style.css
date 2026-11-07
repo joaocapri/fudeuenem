@@ -246,3 +246,10 @@ mark.grifo { color: inherit; padding: 0 .06em; background: linear-gradient(trans
 .acao.tatil:disabled { background: #f2f2f2; color: #a3a3a3; border-color: #d4d4d4; box-shadow: none; }
 .acao.tatil.escuro { background: var(--tinta); color: var(--papel); box-shadow: 4px 4px 0 var(--marca); }
 .acao.tatil.escuro:active { box-shadow: 1px 1px 0 var(--marca); }
+
+/* ---------- cabeçalho com a marca ---------- */
+.marca-topo { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 2px solid var(--tinta); margin-bottom: -14px; }
+.logo-ico { width: 54px; height: 54px; flex: none; animation: tremor .45s ease-in-out .4s 2; transform-origin: 50% 70%; }
+.logo-txt { font: 900 34px/1 var(--f-display); font-stretch: 72%; letter-spacing: -.01em; white-space: nowrap; }
+@keyframes tremor { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
+@media (prefers-reduced-motion: reduce) { .logo-ico { animation: none; } }
