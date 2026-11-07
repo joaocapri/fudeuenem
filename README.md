@@ -32,8 +32,10 @@ Edite `assets/config.js`:
 - `FORM_URL`: URL de um Google Forms para quem quiser receber o plano (vazio = esconde o bloco);
 - `EXATOO_URL`: link do CTA final (o site acrescenta parâmetros UTM e os assuntos marcados).
 
-**Analytics:** cole o script do seu analytics gratuito (GoatCounter, Umami, Cloudflare Web Analytics…)
-no lugar indicado no `<head>` do `index.html`.
+**Analytics (GoatCounter, sem cookies):** painel em <https://fudeuenem.goatcounter.com>. O script está
+no `<head>` do `index.html`; os eventos são enviados pela função `evento()` em `assets/app.js`:
+`curso/…`, `faculdade/…`, `modalidade/…`, `acertos-1o-dia/…`, `compartilhou/card`, `meta-compartilhada/…`,
+`redacao-estimada/…`, `plano/abriu|montou|baixou …`, `assunto-fraco/…`, `clique/exatoo`, `usou/balança MT × CN`.
 
 ## Como atualizar os dados
 

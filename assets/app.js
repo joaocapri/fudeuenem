@@ -29,6 +29,15 @@
   const fmt2 = (x) => Number(x).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Registra um evento anônimo no GoatCounter (aparece no painel como uma "página" com o nome do evento).
+  // Nunca envia dados pessoais: só o tipo de ação, o curso escolhido e faixas de acertos.
+  function evento(caminho, titulo) {
+    try {
+      if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: caminho, title: titulo || caminho, event: true });
+    } catch (e) { /* analytics nunca pode quebrar o site */ }
+  }
+  const faixa10 = (n) => n > 45 ? 'acima de 45' : `${Math.floor(n / 10) * 10}-${Math.floor(n / 10) * 10 + 9}`;
+
   const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   // "ENGENHARIA DA COMPUTAÇÃO" → "Engenharia da Computação"
   const MINUSC = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'na', 'no', 'a', 'o', 'para', 'com']);
@@ -329,6 +338,13 @@
     for (const id of ['etapa2', 'etapa3', 'etapa4']) $(id).hidden = false;
     atualizarMeta();
     $('resumo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const r = S.ofertaSel;
+    evento(r ? `curso/${r.s}/${titulo(r.k)} (${r.m})` : 'curso/digitado à mão', r ? `${titulo(r.k)} · ${r.s} · ${r.m}` : 'Curso digitado à mão');
+    evento(`faculdade/${r ? r.s : 'digitado à mão'}`);
+    evento(`modalidade/${!r ? 'digitado à mão' : S.curso.sobrou ? 'sobrou vaga' : S.curso.modalidade ? 'cota' : 'ampla'}`);
+    const t = lc + ch, f = Math.floor(t / 10) * 10;
+    evento(`acertos-1o-dia/LC+CH ${f}-${f + 9} (de 90)`);
   }
 
   function editar() {
@@ -562,6 +578,7 @@
   // Abre o painel do plano da área escolhida (MT ou CN)
   function abrirPlano(area) {
     S.planoArea = area;
+    evento(`plano/abriu ${PLANOS[area].nome}`);
     const A = PLANOS[area];
     document.querySelectorAll('.plano-btn').forEach((b) => b.classList.toggle('ativo', b.dataset.area === area));
     $('plano_titulo').innerHTML = `Plano de <mark class="grifo">${A.nome}</mark>`;
@@ -765,9 +782,21 @@
 
     ligarTopicos();
     document.querySelectorAll('.plano-btn').forEach((b) => b.addEventListener('click', () => abrirPlano(b.dataset.area)));
-    $('btn_plano').addEventListener('click', gerarPlano);
-    $('btn_share').addEventListener('click', () => compartilhar(S.cardBlob, 'minha-meta-enem.png', 'Minha meta no 2º dia do ENEM'));
+    $('btn_plano').addEventListener('click', () => {
+      gerarPlano();
+      if (S.planoArea) evento(`plano/montou ${PLANOS[S.planoArea].nome}`);
+      for (const id of marcados[S.planoArea] || []) evento(`assunto-fraco/${PLANOS[S.planoArea].nome}/${PLANOS[S.planoArea].topicos.find((t) => t.id === id).nome}`);
+    });
+    $('btn_share').addEventListener('click', () => {
+      compartilhar(S.cardBlob, 'minha-meta-enem.png', 'Minha meta no 2º dia do ENEM');
+      const R = S.ultimo || {};
+      evento('compartilhou/card');
+      if (R.kMT !== null && R.kMT !== undefined) evento(`meta-compartilhada/Matemática ${faixa10(R.kMT)}`);
+      if (R.kCN !== null && R.kCN !== undefined) evento(`meta-compartilhada/Natureza ${faixa10(R.kCN)}`);
+      evento(`redacao-estimada/${faixa10(+$('red').value / 20).replace(/\d+/g, (d) => +d * 20)}`);
+    });
     $('btn_plano_baixar').addEventListener('click', () => {
+      evento(`plano/baixou ${S.planoNome || ''}`.trim());
       const nome = (S.planoNome || 'estudos').toLowerCase();
       compartilhar(S.planoBlob, `meu-plano-${nome}.png`, `Meu plano de ${S.planoNome || 'estudos'} até o 2º dia`);
     });
@@ -775,7 +804,10 @@
     const bc = $('btn_contato');
     if (!CFG.FORM_URL) $('contato').hidden = true; else bc.href = CFG.FORM_URL;
     $('lgpd').addEventListener('change', (e) => { bc.classList.toggle('desativado', !e.target.checked); bc.setAttribute('aria-disabled', String(!e.target.checked)); });
-    bc.addEventListener('click', (e) => { if (!$('lgpd').checked) e.preventDefault(); });
+    bc.addEventListener('click', (e) => { if (!$('lgpd').checked) e.preventDefault(); else evento('clique/quero receber o plano'); });
+    $('btn_exatoo').addEventListener('click', () => evento('clique/exatoo'));
+    $('manual').addEventListener('toggle', () => { if ($('manual').open) evento('abriu/entrada manual'); });
+    $('equilibrio').addEventListener('change', () => evento('usou/balança MT × CN'));
   }
 
   /* ===================================================================
