@@ -13,7 +13,7 @@ window.CONFIG = {
   FORM_URL: '',
 
   // Link do CTA final
-  EXATOO_URL: 'https://app.exatoo.com',
+  EXATOO_URL: 'https://exatoo.com',
 
   // Datas do plano de estudos (2º dia do ENEM 2026 = 15/11)
   DATA_PROVA: '2026-11-15',

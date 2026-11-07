@@ -26,12 +26,13 @@
 
     <header class="topo">
       <p class="sobre">ENEM 2026 · 2º dia · 15/11</p>
-      <h1>Como preciso ir no 2º dia do ENEM?</h1>
+      <h1>Como preciso ir no <mark class="grifo">2º dia</mark> do ENEM?</h1>
       <p class="autor">Prof. João Capri <span data-arroba></span></p>
     </header>
 
     <!-- ============ ETAPA 1: 1º DIA + CURSO ============ -->
     <section class="etapa" id="etapa1">
+      <p class="instrucao">Coloque quantas questões você <mark class="grifo">acertou no 1º dia</mark> e escolha o curso.</p>
       <div class="dupla">
         <div class="contador">
           <label class="rot" for="lc">Linguagens</label>
@@ -56,7 +57,7 @@
       <div id="busca_box">
         <div class="campo" id="ies_box">
           <label class="rot" for="ies_busca">Faculdade</label>
-          <input type="search" id="ies_busca" placeholder="UFPR, UTFPR, USP…" autocomplete="off">
+          <input type="search" id="ies_busca" placeholder="UFPR, UTFPR, UFMG…" autocomplete="off">
           <ul class="lista" id="ies_lista" role="listbox"></ul>
         </div>
         <div class="escolhido" id="ies_sel" hidden></div>
@@ -136,6 +137,7 @@
         <div class="pontas"><span>mais Matemática</span><span>mais Natureza</span></div>
       </div>
       <p class="nota-rodape" id="r_aviso"></p>
+      <p class="disclaimer"><b>Valores estimados.</b> A conversão acertos → nota usa a mediana das notas dos participantes com o mesmo número de acertos nos microdados do ENEM 2024 e 2025 (Inep). Na TRI, a nota não depende só da quantidade de acertos: depende de quais itens foram acertados (parâmetros de dificuldade, discriminação e acerto ao acaso) e da coerência do padrão de respostas. O mesmo número de acertos pode resultar em notas diferentes, em geral com variação de dezenas de pontos. As notas de corte são do Sisu 2025 e mudam a cada edição. O resultado não garante aprovação.</p>
     </section>
 
     <!-- ============ ETAPA 3: CARD ============ -->
@@ -148,16 +150,23 @@
     <!-- ============ PLANO + CTA ============ -->
     <section class="etapa" id="etapa4" hidden>
       <details id="plano_box">
-        <summary>Plano de Matemática até domingo</summary>
-        <p class="aux">Marque até 5 assuntos em que você se sente fraco.</p>
+        <summary>Plano de <mark class="grifo">Matemática</mark> até domingo</summary>
+        <p class="aux">Marque até 5 assuntos em que você se sente fraco. O plano se ajusta à sua meta.</p>
         <div class="chips" id="topicos"></div>
-        <button type="button" class="acao sec" id="btn_plano">Montar plano</button>
-        <div id="plano"></div>
+        <button type="button" class="acao sec" id="btn_plano">Montar meu plano</button>
+        <div id="plano_saida" hidden>
+          <img id="plano_img" alt="Imagem do seu plano de Matemática de 09 a 14/11">
+          <button type="button" class="acao" id="btn_plano_baixar">Baixar plano</button>
+          <details class="plano-texto">
+            <summary>Ver o plano em texto</summary>
+            <div id="plano"></div>
+          </details>
+        </div>
       </details>
 
       <div class="exatoo">
         <p>Treine exatamente esses assuntos no Exatoo.</p>
-        <a id="btn_exatoo" href="https://app.exatoo.com" target="_blank" rel="noopener">app.exatoo.com →</a>
+        <a id="btn_exatoo" href="https://exatoo.com" target="_blank" rel="noopener">exatoo.com →</a>
       </div>
 
       <div class="contato" id="contato">
@@ -167,7 +176,7 @@
     </section>
 
     <footer class="rodape">
-      <p>Estimativa com base nas edições anteriores. A TRI depende do padrão de respostas e as notas de corte mudam a cada edição. Sem vínculo com o Inep ou o MEC.</p>
+      <p>Valores estimados com base nos microdados do ENEM 2024 e 2025. Na TRI, a nota depende do padrão de respostas, não só do número de acertos; as notas de corte mudam a cada edição. Sem vínculo com o Inep ou o MEC.</p>
       <p id="fontes"></p>
     </footer>
   </main>

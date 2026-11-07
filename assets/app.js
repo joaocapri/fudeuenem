@@ -175,7 +175,7 @@
 
     S.ultimo = { ...R, curso: c };
     agendarCard();
-    if ($('plano').innerHTML) gerarPlano();
+    if (!$('plano_saida').hidden) gerarPlano();
   }
 
   /* ===================================================================
@@ -347,7 +347,15 @@
     ctx.font = `850 ${tt}px ${D}`;
     while (Math.max(...tit.map((l) => ctx.measureText(l).width)) > W - 2 * M && tt > 60) { tt -= 2; ctx.font = `850 ${tt}px ${D}`; }
     const ent = Math.round(tt * 1.02);
-    tit.forEach((l, i) => ctx.fillText(l, M, 165 + tt + i * ent));
+    tit.forEach((l, i) => {
+      const y = 165 + tt + i * ent;
+      if (i === 2) { // grifa "SEGUNDO DIA"
+        const w = ctx.measureText(l).width;
+        ctx.fillStyle = MARCA; ctx.fillRect(M - 10, y - tt * 0.42, w + 20, tt * 0.38);
+        ctx.fillStyle = TINTA;
+      }
+      ctx.fillText(l, M, y);
+    });
     const fimTitulo = 165 + tt + (tit.length - 1) * ent;
 
     const marca = (txt, x, y, alt) => { // marca-texto atrás da metade de baixo do texto
@@ -408,7 +416,15 @@
     ctx.textAlign = 'left'; ctx.fillStyle = TINTA;
     ctx.fillRect(M, fimBloco, W - 2 * M, 4);
     ctx.font = `800 62px ${D}`;
-    quebrar(ctx, R.curso.nome, W - 2 * M).slice(0, 2).forEach((l, i) => ctx.fillText(l, M, fimBloco + 95 + i * 72));
+    const lCurso = quebrar(ctx, R.curso.nome, W - 2 * M).slice(0, 2);
+    lCurso.forEach((l, i) => ctx.fillText(l, M, fimBloco + 95 + i * 72));
+    // aviso técnico (curto)
+    ctx.fillStyle = CINZA; ctx.font = `500 22px ${MONO}`;
+    const yAviso = fimBloco + 95 + lCurso.length * 72;
+    ['Valores estimados. Na TRI, a nota depende de quais itens você',
+     'acerta e da coerência das respostas, não só do nº de acertos.',
+     'Base: microdados ENEM 2024–2025 (Inep) e cortes Sisu 2025 (MEC).']
+      .forEach((l, i) => ctx.fillText(l, M, yAviso + i * 32));
 
     // rodapé: assinatura + site com marca-texto
     ctx.fillStyle = TINTA; ctx.font = `800 46px ${D}`;
@@ -428,90 +444,176 @@
     }, 'image/png');
   }
 
-  async function compartilhar() {
-    const blob = S.cardBlob; if (!blob) return;
-    const file = new File([blob], 'minha-meta-enem.png', { type: 'image/png' });
+  // Abre o menu de compartilhar do celular; se não houver, baixa o arquivo
+  async function compartilhar(blob, nome, titulo) {
+    if (!blob) return;
+    const file = new File([blob], nome, { type: 'image/png' });
     try {
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Minha meta no 2º dia do ENEM' });
+        await navigator.share({ files: [file], title: titulo });
         return;
       }
     } catch (e) { if (e && e.name === 'AbortError') return; }
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = 'minha-meta-enem.png';
+    a.href = URL.createObjectURL(blob); a.download = nome;
     document.body.appendChild(a); a.click(); a.remove();
   }
 
   /* ===================================================================
      6) PLANO DE MATEMÁTICA (09/11 a 14/11; prova em 15/11)
-     freq = quão frequente o assunto é no ENEM (3 = cai sempre)
+     freq  = quão frequente o assunto é no ENEM (3 = cai todo ano)
+     nivel = dificuldade típica das questões (1 = base, 3 = avançado)
+     Gera o plano em texto e uma imagem 1080×1920 para baixar.
      =================================================================== */
   const TOPICOS = [
-    { id: 'porc', nome: 'Porcentagem e proporção', freq: 3, dica: 'aumentos e descontos sucessivos, regra de três' },
-    { id: 'graf', nome: 'Gráficos e tabelas', freq: 3, dica: 'leitura de eixos, variação percentual' },
-    { id: 'est', nome: 'Estatística', freq: 3, dica: 'média ponderada, mediana, moda' },
-    { id: 'gplana', nome: 'Geometria plana', freq: 3, dica: 'áreas compostas, semelhança, Pitágoras' },
-    { id: 'gesp', nome: 'Geometria espacial', freq: 3, dica: 'volumes de prismas, cilindros, cones e esferas' },
-    { id: 'escala', nome: 'Escalas e unidades', freq: 2, dica: 'escala de mapas, conversões de área e volume' },
-    { id: 'func', nome: 'Funções', freq: 2, dica: 'leitura de gráfico, vértice da parábola' },
-    { id: 'prob', nome: 'Probabilidade', freq: 2, dica: 'casos favoráveis/possíveis, eventos independentes' },
-    { id: 'comb', nome: 'Combinatória', freq: 2, dica: 'princípio multiplicativo, permutações, combinações' },
-    { id: 'finan', nome: 'Matemática financeira', freq: 2, dica: 'juros simples e compostos, parcelamento' },
-    { id: 'pa', nome: 'PA e PG', freq: 1, dica: 'termo geral, soma dos termos' },
-    { id: 'trig', nome: 'Trigonometria', freq: 1, dica: 'triângulo retângulo, funções periódicas' },
-    { id: 'log', nome: 'Exponencial e log', freq: 1, dica: 'crescimento e decaimento' },
-    { id: 'geoan', nome: 'Geometria analítica', freq: 1, dica: 'distância entre pontos, equação da reta' },
+    { id: 'porc', nome: 'Porcentagem e proporção', freq: 3, nivel: 1, revisar: 'aumentos e descontos sucessivos (multiplique os fatores), regra de três direta e inversa', treinar: 'preço, desconto e misturas', cuidado: 'somar porcentagens sucessivas em vez de multiplicar' },
+    { id: 'graf', nome: 'Gráficos e tabelas', freq: 3, nivel: 1, revisar: 'variação absoluta × percentual, leitura de eixos, escalas e legendas', treinar: 'infográficos e tabelas', cuidado: 'confundir pontos percentuais com variação percentual' },
+    { id: 'est', nome: 'Estatística', freq: 3, nivel: 1, revisar: 'média ponderada, mediana (ordene antes), moda, noção de desvio padrão', treinar: 'tabelas de frequência', cuidado: 'calcular a mediana sem ordenar os dados' },
+    { id: 'gplana', nome: 'Geometria plana', freq: 3, nivel: 2, revisar: 'áreas de figuras compostas, semelhança de triângulos, Pitágoras', treinar: 'terrenos, pisos e plantas baixas', cuidado: 'esquecer de converter unidades de área' },
+    { id: 'gesp', nome: 'Geometria espacial', freq: 3, nivel: 2, revisar: 'volume de prisma, cilindro, cone e esfera; planificações', treinar: 'caixas d’água, embalagens e recipientes', cuidado: 'usar o diâmetro no lugar do raio' },
+    { id: 'escala', nome: 'Escalas e unidades', freq: 2, nivel: 1, revisar: 'escala de mapas; área converte ×100 e volume ×1000; 1 L = 1 dm³', treinar: 'mapas, maquetes e medidas', cuidado: 'converter área como se fosse comprimento' },
+    { id: 'func', nome: 'Funções', freq: 2, nivel: 2, revisar: 'afim (taxa de variação), quadrática (vértice = máximo ou mínimo), leitura de gráfico', treinar: 'lucro máximo e tarifas', cuidado: 'confundir o x do vértice com o y do vértice' },
+    { id: 'prob', nome: 'Probabilidade', freq: 2, nivel: 2, revisar: 'favoráveis ÷ possíveis; "e" multiplica; "ou" soma e tira a interseção', treinar: 'sorteios, urnas e dados', cuidado: 'esquecer que, sem reposição, o total diminui' },
+    { id: 'comb', nome: 'Combinatória', freq: 2, nivel: 3, revisar: 'princípio multiplicativo, permutação com repetição, combinação (ordem não importa)', treinar: 'senhas, filas e comissões', cuidado: 'usar arranjo quando a ordem não importa' },
+    { id: 'finan', nome: 'Matemática financeira', freq: 2, nivel: 2, revisar: 'juros simples × compostos, parcelas e comparação de planos', treinar: 'financiamentos e investimentos', cuidado: 'aplicar juros simples quando o enunciado diz compostos' },
+    { id: 'pa', nome: 'PA e PG', freq: 1, nivel: 2, revisar: 'termo geral e soma dos termos; padrões em figuras', treinar: 'sequências de figuras', cuidado: 'errar o número de termos (n)' },
+    { id: 'trig', nome: 'Trigonometria', freq: 1, nivel: 3, revisar: 'seno, cosseno e tangente no triângulo retângulo; funções periódicas', treinar: 'rampas, sombras e marés', cuidado: 'usar o cateto errado na razão' },
+    { id: 'log', nome: 'Exponencial e logaritmo', freq: 1, nivel: 3, revisar: 'crescimento e decaimento, meia-vida, propriedades do log', treinar: 'populações, pH e juros', cuidado: 'tratar log da soma como soma dos logs' },
+    { id: 'geoan', nome: 'Geometria analítica', freq: 1, nivel: 3, revisar: 'distância entre pontos, ponto médio, equação da reta', treinar: 'mapas no plano cartesiano', cuidado: 'trocar x e y' },
   ];
-  const marcados = new Set();
+  const DIAS = [['09/11', 'seg'], ['10/11', 'ter'], ['11/11', 'qua'], ['12/11', 'qui'], ['13/11', 'sex'], ['14/11', 'sáb']];
+  const marcados = [];   // em ordem de marcação
 
   function montarTopicos() {
     $('topicos').innerHTML = TOPICOS.map((t) => `<button type="button" class="chip" data-id="${t.id}">${esc(t.nome)}</button>`).join('');
     $('topicos').addEventListener('click', (e) => {
       const b = e.target.closest('.chip'); if (!b) return;
-      const id = b.dataset.id;
-      if (marcados.has(id)) marcados.delete(id); else if (marcados.size < 5) marcados.add(id);
+      const i = marcados.indexOf(b.dataset.id);
+      if (i >= 0) marcados.splice(i, 1); else if (marcados.length < 5) marcados.push(b.dataset.id);
       document.querySelectorAll('#topicos .chip').forEach((c) => {
-        c.classList.toggle('ativo', marcados.has(c.dataset.id));
-        c.disabled = !marcados.has(c.dataset.id) && marcados.size >= 5;
+        const on = marcados.includes(c.dataset.id);
+        c.classList.toggle('ativo', on);
+        c.disabled = !on && marcados.length >= 5;
       });
     });
   }
 
-  function gerarPlano() {
+  // Monta a estrutura do plano a partir da meta de MT e dos assuntos marcados
+  function montarPlano() {
     const R = S.ultimo;
-    const meta = !R || R.kMT === null ? 25 : clamp(R.kMT, 5, 45);
-    const perfil = meta <= 18
-      ? { q: 10, txt: `Meta de ${meta}: garanta as fáceis e médias. Questões curtas primeiro, nada em branco.` }
-      : meta <= 30
-        ? { q: 15, txt: `Meta de ${meta}: domine o que mais cai. Duas passadas na prova, nada em branco.` }
-        : { q: 20, txt: `Meta de ${meta}: dá para errar pouco. Ritmo de 3 min por questão e revisão das contas.` };
-    const fracos = TOPICOS.filter((t) => marcados.has(t.id));
-    const resto = TOPICOS.filter((t) => !marcados.has(t.id)).sort((a, b) => b.freq - a.freq);
-    const foco = [...fracos, ...resto].filter((t) => marcados.has(t.id) || meta > 18 || t.freq >= 2);
-    const dias = [['09/11', 'seg'], ['10/11', 'ter'], ['11/11', 'qua'], ['12/11', 'qui'], ['13/11', 'sex'], ['14/11', 'sáb']];
+    const metaReal = !R || R.kMT === null ? 25 : R.kMT;
+    const meta = clamp(metaReal, 5, 45);
+    const perfil = meta <= 20
+      ? { nome: 'base', q: 12, maxNivel: 2, prova: 'Comece pelas questões curtas e de leitura de gráfico. Na TRI, acertar as fáceis pesa mais do que arriscar as difíceis. Não deixe nenhuma em branco.' }
+      : meta <= 32
+        ? { nome: 'intermediário', q: 15, maxNivel: 3, prova: 'Faça duas passadas: primeiro as que você domina, depois as trabalhosas. Guarde 30 minutos para elas e não deixe nenhuma em branco.' }
+        : { nome: 'avançado', q: 20, maxNivel: 3, prova: 'Mantenha ritmo de ~3 min por questão e revise as contas de geometria e combinatória, onde mais se perde ponto.' };
 
-    let html = `<p class="estrategia">${perfil.txt}</p>`;
-    for (let i = 0; i < 4; i++) {
-      const t = foco[i];
-      html += `<div class="dia"><h3><small>${dias[i][0]} ${dias[i][1]}</small>${esc(t.nome)}</h3><ul>
-        <li>40 min de teoria: ${esc(t.dica)}</li>
-        <li>${perfil.q} questões de ENEM anteriores, 3 min cada</li>
-        <li>20 min corrigindo os erros</li></ul></div>`;
+    const fracos = marcados.map((id) => TOPICOS.find((t) => t.id === id));
+    const resto = TOPICOS.filter((t) => !marcados.includes(t.id) && t.nivel <= perfil.maxNivel && (meta > 32 || t.freq >= 2))
+      .sort((a, b) => b.freq - a.freq || a.nivel - b.nivel);
+    const fila = [...fracos, ...resto];
+    const principais = fila.slice(0, 4);
+    const aquec = TOPICOS.filter((t) => t.freq === 3 && !principais.includes(t));
+    const aq = (i) => aquec.length ? aquec[i % aquec.length] : null;
+
+    const dias = principais.map((t, i) => ({
+      data: DIAS[i][0], sem: DIAS[i][1], titulo: t.nome, fraco: marcados.includes(t.id),
+      itens: [`Revisar: ${t.revisar}.`, `Treinar: ${perfil.q} questões de ENEM anteriores (${t.treinar}).`,
+        `Cuidado: ${t.cuidado}.`, aq(i) ? `Aquecimento: 5 questões de ${aq(i).nome.toLowerCase()}.` : ''].filter(Boolean),
+      resumo: `${perfil.q} questões · cuidado: ${t.cuidado}`,
+    }));
+    const quinto = fila[4];
+    dias.push({
+      data: DIAS[4][0], sem: DIAS[4][1], titulo: 'Simulado', fraco: false,
+      itens: ['45 questões de Matemática de uma prova anterior, em até 2h30, no horário da prova.',
+        `Conte os acertos e compare com a meta de ${meta}.`, quinto ? `Revise ${quinto.nome.toLowerCase()} (30 min).` : 'Revise os erros da semana.'],
+      resumo: `45 questões em 2h30 · compare com a meta de ${meta}`,
+    });
+    dias.push({
+      data: DIAS[5][0], sem: DIAS[5][1], titulo: 'Dia leve', fraco: false,
+      itens: ['No máximo 1 hora: fórmulas e o caderno de erros.', 'Documento com foto, caneta preta de tubo transparente, local de prova.', 'Dormir cedo.'],
+      resumo: '1 hora de fórmulas · separar documento e caneta · dormir cedo',
+    });
+    return { meta, metaReal, perfil, dias };
+  }
+
+  function gerarPlano() {
+    const P = montarPlano();
+    let html = `<p class="estrategia"><b>Na prova:</b> ${P.perfil.prova}</p>`;
+    for (const d of P.dias) {
+      html += `<div class="dia"><h3><small>${d.data} ${d.sem}</small>${esc(d.titulo)}</h3><ul>${d.itens.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>`;
     }
-    const quinto = fracos[4] || foco[4];
-    html += `<div class="dia"><h3><small>${dias[4][0]} ${dias[4][1]}</small>Simulado</h3><ul>
-      <li>45 questões de Matemática em 2h30</li>
-      <li>Compare com a meta de ${meta}${quinto ? ` e revise ${esc(quinto.nome.toLowerCase())}` : ''}</li></ul></div>
-      <div class="dia"><h3><small>${dias[5][0]} ${dias[5][1]}</small>Dia leve</h3><ul>
-      <li>1 hora de revisão de fórmulas, no máximo</li>
-      <li>Documento com foto, caneta preta de tubo transparente, local da prova</li>
-      <li>Dormir cedo</li></ul></div>`;
     $('plano').innerHTML = html;
+    $('plano_saida').hidden = false;
+    desenharPlano(P);
 
-    const u = new URL(CFG.EXATOO_URL || 'https://app.exatoo.com');
+    const u = new URL(CFG.EXATOO_URL || 'https://exatoo.com');
     u.searchParams.set('utm_source', 'calculadora2dia'); u.searchParams.set('utm_medium', 'instagram'); u.searchParams.set('utm_campaign', 'enem2026');
-    if (fracos.length) u.searchParams.set('utm_content', fracos.map((t) => t.id).join(','));
+    if (marcados.length) u.searchParams.set('utm_content', marcados.join(','));
     $('btn_exatoo').href = u.toString();
+  }
+
+  // Imagem do plano (1080×1920), no mesmo estilo do card
+  async function desenharPlano(P) {
+    await carregarFontes();
+    const W = 1080, H = 1920, M = 90;
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+    const D = 'Archivo, "Helvetica Neue", Arial, sans-serif', MONO = '"IBM Plex Mono", Menlo, monospace';
+    const TINTA = '#121212', CINZA = '#6a6a6a', MARCA = '#ffe94a';
+    const grifo = (txt, x, y, alt) => { const w = ctx.measureText(txt).width; ctx.fillStyle = MARCA; ctx.fillRect(x - 10, y - alt * 0.44, w + 20, alt * 0.38); };
+
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = TINTA; ctx.font = `600 30px ${MONO}`;
+    ctx.fillText('MATEMÁTICA · 09 A 14/11 · PROVA 15/11', M, 140);
+    ctx.font = `850 118px ${D}`;
+    ctx.fillText('MEU PLANO', M, 275);
+    grifo('ATÉ DOMINGO', M, 395, 118);
+    ctx.fillStyle = TINTA; ctx.fillText('ATÉ DOMINGO', M, 395);
+
+    ctx.font = `700 40px ${D}`;
+    const metaTxt = `meta: ${P.metaReal > 45 ? '45 (o máximo)' : P.meta} de 45 em Matemática`;
+    ctx.fillText(metaTxt, M, 470);
+    if (P.dias.some((d) => d.fraco)) {
+      ctx.fillStyle = CINZA; ctx.font = `500 24px ${MONO}`;
+      ctx.fillText('grifado: assuntos que você marcou como fracos', M, 512);
+    }
+
+    // seis dias
+    let y = 590;
+    const passo = 184, colTxt = M + 190, largTxt = W - colTxt - M;
+    for (const d of P.dias) {
+      ctx.fillStyle = TINTA; ctx.fillRect(M, y - 50, W - 2 * M, 2);
+      ctx.font = `600 30px ${MONO}`; ctx.fillStyle = TINTA; ctx.fillText(d.data, M, y + 6);
+      ctx.fillStyle = CINZA; ctx.font = `500 26px ${MONO}`; ctx.fillText(d.sem.toUpperCase(), M, y + 44);
+      ctx.font = `800 46px ${D}`;
+      const tit = quebrar(ctx, d.titulo, largTxt)[0];
+      if (d.fraco) { // grifo na base da palavra (no tamanho pequeno o grifo alto parece risco)
+        const w = ctx.measureText(tit).width;
+        ctx.fillStyle = MARCA; ctx.fillRect(colTxt - 8, y - 10, w + 16, 22);
+      }
+      ctx.fillStyle = TINTA; ctx.fillText(tit, colTxt, y + 6);
+      ctx.fillStyle = CINZA; ctx.font = `500 27px ${D}`;
+      quebrar(ctx, d.resumo, largTxt).slice(0, 2).forEach((l, i) => ctx.fillText(l, colTxt, y + 50 + i * 36));
+      y += passo;
+    }
+
+    // rodapé
+    ctx.fillStyle = TINTA; ctx.font = `600 30px ${MONO}`;
+    ctx.fillText(`Prof. João Capri ${CFG.ARROBA || ''} · treine no exatoo.com`.trim(), M, 1775);
+    ctx.font = `850 60px ${D}`;
+    grifo(CFG.SITE || '', M, 1860, 60);
+    ctx.fillStyle = TINTA; ctx.fillText(CFG.SITE || '', M, 1860);
+
+    cv.toBlob((blob) => {
+      if (!blob) return;
+      S.planoBlob = blob;
+      const img = $('plano_img'), old = img.src;
+      img.src = URL.createObjectURL(blob);
+      if (old && old.startsWith('blob:')) URL.revokeObjectURL(old);
+    }, 'image/png');
   }
 
   /* ===================================================================
@@ -565,7 +667,8 @@
 
     montarTopicos();
     $('btn_plano').addEventListener('click', gerarPlano);
-    $('btn_share').addEventListener('click', compartilhar);
+    $('btn_share').addEventListener('click', () => compartilhar(S.cardBlob, 'minha-meta-enem.png', 'Minha meta no 2º dia do ENEM'));
+    $('btn_plano_baixar').addEventListener('click', () => compartilhar(S.planoBlob, 'meu-plano-matematica.png', 'Meu plano de Matemática até o 2º dia'));
 
     const bc = $('btn_contato');
     if (!CFG.FORM_URL) $('contato').hidden = true; else bc.href = CFG.FORM_URL;

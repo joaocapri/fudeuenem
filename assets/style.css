@@ -172,3 +172,15 @@ input[type=range]:active::-webkit-slider-thumb { background: var(--tinta); }
 .rodape a { color: var(--tinta-2); }
 
 @media (prefers-reduced-motion: reduce) { .travessao, .prato { transition: none; } }
+
+/* ---------- grifo (marca-texto), instrução, aviso técnico, plano em imagem ---------- */
+mark.grifo { color: inherit; padding: 0 .06em; background: linear-gradient(transparent 56%, var(--marca) 56%, var(--marca) 92%, transparent 92%); }
+.instrucao { margin: 0; font-size: 17px; line-height: 1.35; }
+.disclaimer { margin: 0; padding-top: 12px; border-top: 1px solid var(--linha); font-family: var(--f-mono); font-size: 11px; line-height: 1.6; color: var(--tinta-2); }
+.disclaimer b { color: var(--tinta); font-weight: 600; }
+#plano_saida { display: flex; flex-direction: column; gap: 14px; }
+#plano_img { display: block; width: 100%; max-width: 320px; margin: 0 auto; aspect-ratio: 9 / 16; border: 1px solid var(--linha); background: #fafafa; }
+#btn_plano_baixar { max-width: 320px; margin: 0 auto; }
+.plano-texto summary { cursor: pointer; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; list-style: none; }
+.plano-texto summary::-webkit-details-marker { display: none; }
+.dia .linha-dica { color: var(--tinta-2); }
