@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bastidores · Fudeu ENEM?!</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0c0c0c">
+  <link rel="icon" href="../assets/icone.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    /* Bastidores: página para gravar vídeo. Versão "noturna" da identidade do site:
+       fundo preto, texto claro, amarelo marca-texto como único destaque. Todos os
+       números vêm dos arquivos reais em /data e do código real em /assets e /scripts. */
+    :root {
+      color-scheme: dark;
+      --fundo: #0c0c0c; --fundo-2: #161616; --linha: #2a2a2a;
+      --txt: #f2f2f2; --txt-2: #8d8d8d; --marca: #ffe94a; --azul: #9fd8ff; --verm: #ff7a6b;
+      --f-d: "Archivo", "Helvetica Neue", Arial, sans-serif;
+      --f-m: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
+    body { margin: 0; background: var(--fundo); color: var(--txt); font-family: var(--f-d); }
+    .wrap { max-width: 560px; margin: 0 auto; padding-block: 24px 140px;
+      padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px));
+      display: flex; flex-direction: column; gap: 44px; }
+    .mono { font-family: var(--f-m); }
+    .rot { font: 600 11px var(--f-m); letter-spacing: .1em; text-transform: uppercase; color: var(--txt-2); margin: 0 0 10px; }
+    mark { background: var(--marca); color: var(--fundo); padding: 0 .1em; }
+    h2 { margin: 0 0 6px; font: 900 34px/1 var(--f-d); font-stretch: 75%; letter-spacing: -.01em; }
+    h2 mark { color: var(--fundo); background: var(--marca); padding: 0 .12em; }
+    .sub { margin: 0; color: var(--txt-2); font-size: 14px; line-height: 1.45; }
+
+    /* topo */
+    .topo { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--txt); padding-bottom: 14px; }
+    .topo img { width: 56px; height: 56px; }
+    .topo b { font: 900 32px/1 var(--f-d); font-stretch: 72%; }
+    .topo small { display: block; font: 600 11px var(--f-m); letter-spacing: .1em; color: var(--marca); margin-top: 4px; }
+    .ao-vivo { display: inline-flex; align-items: center; gap: 6px; font: 600 11px var(--f-m); color: var(--verm); letter-spacing: .08em; }
+    .ao-vivo::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--verm); animation: pisca 1.2s infinite; }
+    @keyframes pisca { 50% { opacity: .2; } }
+
+    /* contadores */
+    .contadores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cont { border: 1.5px solid var(--linha); border-radius: 10px; padding: 14px 12px; background: var(--fundo-2); min-width: 0; }
+    .cont.grande { grid-column: 1 / -1; border-color: var(--marca); box-shadow: 4px 4px 0 var(--marca); }
+    .cont .n { font: 900 30px/1 var(--f-d); font-stretch: 75%; font-variant-numeric: tabular-nums; color: var(--txt); overflow-wrap: anywhere; }
+    .cont.grande .n { font-size: 46px; color: var(--marca); }
+    .cont .d { margin-top: 6px; font: 500 11.5px/1.35 var(--f-m); color: var(--txt-2); }
+
+    /* terminal */
+    .terminal { background: #050505; border: 1.5px solid var(--linha); border-radius: 10px; overflow: hidden; }
+    .terminal .barra { display: flex; gap: 6px; padding: 9px 12px; border-bottom: 1px solid var(--linha); }
+    .terminal .barra i { width: 10px; height: 10px; border-radius: 50%; background: #3a3a3a; }
+    .terminal .barra span { margin-left: 8px; font: 500 11px var(--f-m); color: var(--txt-2); }
+    .terminal pre { margin: 0; padding: 12px; height: 300px; overflow: hidden; font: 500 11.5px/1.6 var(--f-m); color: #cfcfcf; white-space: pre-wrap; word-break: break-word; }
+    .terminal .ok { color: var(--marca); } .terminal .cmd { color: var(--azul); } .terminal .dim { color: #6d6d6d; }
+    .cursor { display: inline-block; width: 7px; height: 13px; background: var(--marca); vertical-align: -2px; animation: pisca 1s infinite; }
+
+    /* mapa de calor TRI */
+    .calor { display: grid; grid-template-columns: 34px 1fr; gap: 6px 8px; align-items: center; }
+    .calor .lab { font: 600 11px var(--f-m); color: var(--txt-2); }
+    .calor .linha { display: grid; grid-template-columns: repeat(46, 1fr); gap: 1px; height: 36px; }
+    .calor .linha div { border-radius: 1px; }
+    .eixo { grid-column: 2; display: flex; justify-content: space-between; font: 500 10px var(--f-m); color: var(--txt-2); }
+    .legenda { display: flex; align-items: center; gap: 8px; font: 500 10px var(--f-m); color: var(--txt-2); margin-top: 10px; }
+    .legenda .barra { flex: 1; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #181818, #3a3820 45%, #a99a3c 75%, var(--marca)); }
+
+    /* gráfico de distribuição */
+    .grafico { background: var(--fundo-2); border: 1.5px solid var(--linha); border-radius: 10px; padding: 10px; }
+    .grafico svg { display: block; width: 100%; height: auto; }
+    .chave { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; font: 600 11px var(--f-m); }
+    .chave span::before { content: ""; display: inline-block; width: 14px; height: 3px; margin-right: 6px; vertical-align: middle; background: currentColor; }
+
+    /* fluxo de cursos */
+    .fluxo { height: 330px; overflow: hidden; border: 1.5px solid var(--linha); border-radius: 10px; background: var(--fundo-2); position: relative; }
+    .fluxo::before, .fluxo::after { content: ""; position: absolute; left: 0; right: 0; height: 40px; z-index: 1; pointer-events: none; }
+    .fluxo::before { top: 0; background: linear-gradient(var(--fundo-2), transparent); }
+    .fluxo::after { bottom: 0; background: linear-gradient(transparent, var(--fundo-2)); }
+    .fluxo .trilho { animation: sobe 90s linear infinite; }
+    @keyframes sobe { to { transform: translateY(-50%); } }
+    .curso { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 9px 12px; border-bottom: 1px solid var(--linha); font-family: var(--f-m); }
+    .curso .k { font: 700 13px var(--f-d); color: var(--txt); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .curso .c { font-size: 13px; color: var(--marca); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .curso .m { grid-column: 1 / -1; font-size: 10.5px; color: var(--txt-2); }
+
+    /* fórmulas */
+    .formulas { display: flex; flex-direction: column; gap: 10px; }
+    .formula { border-left: 3px solid var(--marca); padding: 8px 12px; background: var(--fundo-2); font: 500 13px/1.6 var(--f-m); overflow-x: auto; }
+    .formula small { display: block; color: var(--txt-2); font-size: 11px; }
+
+    /* código */
+    .codigo { border: 1.5px solid var(--linha); border-radius: 10px; overflow: hidden; background: #050505; }
+    .codigo .barra { display: flex; justify-content: space-between; padding: 9px 12px; border-bottom: 1px solid var(--linha); font: 500 11px var(--f-m); color: var(--txt-2); }
+    .codigo .barra b { color: var(--marca); font-weight: 600; }
+    .codigo pre { margin: 0; height: 520px; overflow: hidden; padding: 10px 0; font: 400 11px/1.55 var(--f-m); color: #d6d6d6; }
+    .codigo .l { display: block; padding: 0 12px; white-space: pre; }
+    .codigo .l::before { content: attr(data-n); display: inline-block; width: 38px; color: #4d4d4d; text-align: right; margin-right: 12px; }
+    .tk-c { color: #6f6f6f; font-style: italic; } .tk-s { color: var(--azul); } .tk-n { color: var(--verm); } .tk-k { color: var(--marca); }
+    .parceria { display: flex; align-items: center; gap: 10px; margin-top: 12px; font: 600 12px var(--f-m); color: var(--txt-2); }
+    .parceria b { color: var(--txt); }
+
+    .fim { text-align: center; }
+    .fim img { width: 120px; height: 120px; }
+    .fim p { margin: 10px 0 0; font: 900 40px/1 var(--f-d); font-stretch: 72%; }
+    .fim small { display: block; margin-top: 8px; font: 600 13px var(--f-m); color: var(--marca); }
+
+    /* modo gravação */
+    #gravar { position: fixed; z-index: 5; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      font: 700 13px var(--f-m); color: var(--fundo); background: var(--marca); border: 2px solid var(--txt); border-radius: 99px; padding: 11px 16px; box-shadow: 3px 3px 0 var(--txt); cursor: pointer; }
+    body.gravando #gravar { opacity: .15; }
+    @media (prefers-reduced-motion: reduce) { .fluxo .trilho { animation-duration: 400s; } }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+
+    <header class="topo">
+      <img src="../assets/icone.svg" alt="">
+      <div><b>FUDEU <mark>ENEM</mark>?!</b><small>BASTIDORES · BASE DE DADOS</small></div>
+    </header>
+
+    <section>
+      <p class="rot"><span class="ao-vivo">processado</span></p>
+      <h2>A nossa <mark>base de dados</mark></h2>
+      <p class="sub">Tudo oficial: microdados do ENEM 2024 e 2025 (Inep) e as planilhas do Sisu 2025 (MEC).</p>
+    </section>
+
+    <section class="contadores">
+      <div class="cont grande"><div class="n" data-alvo="1159143300">0</div><div class="d">respostas comparadas, uma a uma, com o gabarito de cada cor de prova</div></div>
+      <div class="cont"><div class="n" data-alvo="6621182">0</div><div class="d">participantes do ENEM analisados</div></div>
+      <div class="cont"><div class="n" data-alvo="25758740">0</div><div class="d">provas corrigidas (LC, CH, CN e MT)</div></div>
+      <div class="cont"><div class="n" data-alvo="6180">0</div><div class="d">cursos do Sisu</div></div>
+      <div class="cont"><div class="n" data-alvo="124">0</div><div class="d">universidades e institutos</div></div>
+      <div class="cont"><div class="n" data-alvo="47095">0</div><div class="d">notas de corte por modalidade</div></div>
+      <div class="cont"><div class="n" data-alvo="150">0</div><div class="d">tipos de cota e ação afirmativa</div></div>
+    </section>
+
+    <section>
+      <p class="rot">01 · processamento</p>
+      <div class="terminal">
+        <div class="barra"><i></i><i></i><i></i><span>python3 scripts/processa_tri.py</span></div>
+        <pre id="term"></pre>
+      </div>
+    </section>
+
+    <section>
+      <p class="rot">02 · tabela TRI</p>
+      <h2>Acertos → <mark>nota</mark></h2>
+      <p class="sub">Mediana da nota de quem teve cada número de acertos (0 a 45), em cada área.</p>
+      <div class="calor" id="calor" style="margin-top:14px"></div>
+      <div class="legenda"><span id="leg_min">300</span><span class="barra"></span><span id="leg_max">960</span></div>
+    </section>
+
+    <section>
+      <p class="rot">03 · distribuição nacional</p>
+      <h2>Onde cada nota <mark>fica</mark></h2>
+      <p class="sub">Percentis 0 a 100 das notas no ENEM 2025.</p>
+      <div class="grafico" style="margin-top:14px"><svg id="dist" viewBox="0 0 340 200" role="img" aria-label="Curvas de distribuição das notas por área"></svg>
+        <div class="chave"><span style="color:#ffe94a">MT</span><span style="color:#9fd8ff">CN</span><span style="color:#ff7a6b">CH</span><span style="color:#cfcfcf">LC</span></div>
+      </div>
+    </section>
+
+    <section>
+      <p class="rot">04 · cursos.json</p>
+      <h2>Corte, pesos e <mark>mínimos</mark></h2>
+      <div class="fluxo" style="margin-top:14px"><div class="trilho" id="trilho"></div></div>
+    </section>
+
+    <section class="formulas">
+      <p class="rot">05 · o algoritmo</p>
+      <div class="formula"><small>nota no Sisu</small>nota = Σ(pesoᵢ × notaᵢ) ÷ Σ pesos</div>
+      <div class="formula"><small>o que falta no 2º dia</small>falta = corte × Σpesos − (pLC·LC + pCH·CH + pRED·RED)</div>
+      <div class="formula"><small>a balança</small>pMT·MT(p) + pCN·CN(p) = falta  → busca binária no percentil p</div>
+      <div class="formula"><small>mínimo eliminatório (com folga)</small>k = min{ k : P25(nota | k acertos) ≥ mínimo }</div>
+      <div class="formula"><small>acertos de cada participante</small>acertos = Σ [ respostaᵢ = gabaritoᵢ ]  (LC: gabarito montado por TP_LINGUA)</div>
+    </section>
+
+    <section>
+      <p class="rot">06 · o código</p>
+      <h2>Escrito com o meu <mark>amigo Claude</mark></h2>
+      <div class="codigo" style="margin-top:14px">
+        <div class="barra"><span id="arq">assets/app.js</span><span><b id="nlinhas">0</b> linhas</span></div>
+        <pre id="codigo"></pre>
+      </div>
+      <div class="parceria"><span>Prof. <b>João Capri</b> + <b>Claude</b> (Anthropic)</span></div>
+    </section>
+
+    <section class="fim">
+      <img src="../assets/icone.svg" alt="">
+      <p>FUDEU <mark>ENEM</mark>?!</p>
+      <small>fudeuenem.com · @joa.capri</small>
+    </section>
+  </main>
+
+  <button type="button" id="gravar">▶ modo gravação</button>
+
+  <script>
+  (function () {
+    'use strict';
+    const $ = (id) => document.getElementById(id);
+    const fmt = (n) => Math.round(n).toLocaleString('pt-BR');
+    const esc = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    const quandoVisivel = (el, fn) => {
+      const io = new IntersectionObserver((es) => { if (es[0].isIntersecting) { io.disconnect(); fn(); } }, { threshold: 0.25 });
+      io.observe(el);
+    };
+
+    /* contadores: sobem até o número real quando aparecem na tela */
+    document.querySelectorAll('.cont .n').forEach((el) => {
+      const alvo = +el.dataset.alvo;
+      el.textContent = fmt(alvo); // estado final visível mesmo sem animação
+      quandoVisivel(el, () => {
+        const t0 = performance.now(), dur = 1800;
+        const passo = (t) => {
+          const f = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - f, 3);
+          el.textContent = fmt(alvo * e);
+          if (f < 1) requestAnimationFrame(passo);
+        };
+        requestAnimationFrame(passo);
+      });
+    });
+
+    /* terminal: reproduz o log real do processamento dos microdados */
+    const LOG = [
+      ['cmd', '$ python3 scripts/processa_tri.py microdados_enem_2025.zip microdados_enem_2024.zip'],
+      ['dim', '[microdados_enem_2025.zip] RESULTADOS_2025.csv · 2,1 GB · Deflate64 → unzip -p'],
+      ...Array.from({ length: 9 }, (_, i) => ['', `  bloco ${i + 1}: 400.000 linhas · acertos LC/CH/CN/MT calculados`]),
+      ['ok', '  2025 LC: n=3.455.194  corr(acertos, nota)=0.957'],
+      ['ok', '  2025 CH: n=3.448.468  corr(acertos, nota)=0.959'],
+      ['ok', '  2025 CN: n=3.259.561  corr(acertos, nota)=0.926'],
+      ['ok', '  2025 MT: n=3.259.443  corr(acertos, nota)=0.943'],
+      ['dim', '[microdados_enem_2024.zip] RESULTADOS_2024.csv · 1,7 GB'],
+      ...Array.from({ length: 8 }, (_, i) => ['', `  bloco ${i + 1}: 400.000 linhas · acertos LC/CH/CN/MT calculados`]),
+      ['ok', '  2024 LC: n=3.165.988  corr(acertos, nota)=0.963'],
+      ['ok', '  2024 MT: n=3.004.169  corr(acertos, nota)=0.917'],
+      ['', '  validação TP_LINGUA: 48,6% acerto (regra) × 18,8% (invertida) ✓'],
+      ['ok', 'OK → data/tri_tabela.json, data/distribuicao.json'],
+      ['cmd', '$ python3 scripts/processa_sisu.py --vagas vagas_2025.xlsx --corte cortes_2025.xlsx'],
+      ['', '[vagas_2025.xlsx] 58.203 linhas · [cortes_2025.xlsx] 58.203 linhas'],
+      ['ok', 'OK → data/cursos.json: 6.180 cursos, 150 modalidades'],
+    ];
+    quandoVisivel($('term'), () => {
+      const pre = $('term'); let i = 0;
+      const cursor = '<span class="cursor"></span>';
+      const linhas = [];
+      const prox = () => {
+        if (i >= LOG.length) { pre.innerHTML = linhas.join('\n') + '\n' + cursor; return; }
+        const [cls, txt] = LOG[i++];
+        linhas.push(`<span class="${cls}">${esc(txt)}</span>`);
+        pre.innerHTML = linhas.join('\n') + cursor;
+        pre.scrollTop = pre.scrollHeight;
+        setTimeout(prox, cls === 'cmd' ? 700 : 170);
+      };
+      prox();
+    });
+
+    /* dados reais */
+    Promise.all([
+      fetch('../data/tri_tabela.json').then((r) => r.json()),
+      fetch('../data/distribuicao.json').then((r) => r.json()),
+      fetch('../data/cursos.json').then((r) => r.json()),
+    ]).then(([tri, dist, cursos]) => {
+      // mapa de calor: 4 áreas × 46 colunas (0 a 45 acertos)
+      const areas = ['LC', 'CH', 'CN', 'MT'];
+      const todos = areas.flatMap((a) => tri.areas[a].pct.map((l) => l[2]));
+      const lo = Math.min(...todos), hi = Math.max(...todos);
+      const cor = (v) => {
+        const f = Math.pow((v - lo) / (hi - lo), 1.8);   // realça o degradê do escuro ao amarelo
+        const r = Math.round(24 + f * (255 - 24)), g = Math.round(24 + f * (233 - 24)), b = Math.round(24 + f * (74 - 24));
+        return `rgb(${r},${g},${b})`;
+      };
+      $('calor').innerHTML = areas.map((a) => `<span class="lab">${a}</span><div class="linha">${
+        tri.areas[a].pct.map((l, k) => `<div style="background:${cor(l[2])}" title="${a} · ${k} acertos ≈ ${Math.round(l[2])}"></div>`).join('')}</div>`).join('')
+        + '<span></span><div class="eixo"><span>0 acertos</span><span>15</span><span>30</span><span>45</span></div>';
+      $('leg_min').textContent = Math.round(lo); $('leg_max').textContent = Math.round(hi);
+
+      // curvas de distribuição (percentil × nota)
+      const W = 340, H = 200, x0 = 28, y0 = 180, xs = (p) => x0 + p * (W - x0 - 6) / 100, ys = (n) => y0 - (n - 250) * (y0 - 8) / (1000 - 250);
+      let svg = '';
+      for (const n of [300, 500, 700, 900]) svg += `<line x1="${x0}" x2="${W - 6}" y1="${ys(n)}" y2="${ys(n)}" stroke="#2a2a2a"/><text x="0" y="${ys(n) + 4}" fill="#8d8d8d" font-size="9" font-family="IBM Plex Mono">${n}</text>`;
+      const cores = { MT: '#ffe94a', CN: '#9fd8ff', CH: '#ff7a6b', LC: '#cfcfcf' };
+      for (const a of ['LC', 'CH', 'CN', 'MT']) {
+        const q = dist.areas[a].q;
+        svg += `<polyline fill="none" stroke="${cores[a]}" stroke-width="${a === 'MT' ? 2.5 : 1.6}" points="${q.map((v, p) => `${xs(p).toFixed(1)},${ys(v).toFixed(1)}`).join(' ')}"/>`;
+      }
+      svg += `<text x="${x0}" y="197" fill="#8d8d8d" font-size="9" font-family="IBM Plex Mono">percentil 0</text><text x="${W - 6}" y="197" fill="#8d8d8d" font-size="9" font-family="IBM Plex Mono" text-anchor="end">100</text>`;
+      $('dist').innerHTML = svg;
+
+      // fluxo de cursos reais (amostra aleatória, repetida para o loop contínuo)
+      const C = cursos.cursos, mods = cursos.modalidades;
+      const am = Array.from({ length: 70 }, () => C[Math.floor(Math.random() * C.length)]).filter((r) => r.o[0][1] > 0);
+      const MIN = new Set(['de', 'da', 'do', 'das', 'dos', 'e', 'em', 'na', 'no', 'a', 'o', 'para', 'com']);
+      const tit = (s) => s.toLowerCase().split(' ').map((w, i) => (i && MIN.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      const linha = (r) => `<div class="curso"><span class="k">${esc(tit(r.k))} · ${esc(r.s)}</span><span class="c">${r.o[0][1].toFixed(2).replace('.', ',')}</span>
+        <span class="m">${esc(r.m)}/${esc(r.u)} · pesos ${r.p.join('·')}${r.mn ? ' · mín ' + r.mn.filter(Boolean).join('/') : ''} · ${r.o.length} modalidades</span></div>`;
+      const bloco = am.map(linha).join('');
+      $('trilho').innerHTML = bloco + bloco;
+    }).catch(() => {});
+
+    /* código real do site, com destaque de sintaxe simples */
+    const KW_JS = /\b(const|let|function|return|if|else|for|of|while|await|async|new|try|catch|true|false|null)\b/;
+    const KW_PY = /\b(def|return|if|else|elif|for|in|import|from|with|as|and|or|not|True|False|None|lambda)\b/;
+    function realca(linha, py) {
+      const re = py
+        ? /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(\d+(?:[._]\d+)*)\b|\b(def|return|if|else|elif|for|in|import|from|with|as|and|or|not|True|False|None|lambda)\b/g
+        : /(\/\/.*$|\/\*.*?\*\/)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`)|\b(\d+(?:\.\d+)?)\b|\b(const|let|function|return|if|else|for|of|while|await|async|new|try|catch|true|false|null)\b/g;
+      let out = '', ult = 0, m;
+      while ((m = re.exec(linha))) {
+        out += esc(linha.slice(ult, m.index));
+        const cls = m[1] ? 'tk-c' : m[2] ? 'tk-s' : m[3] ? 'tk-n' : 'tk-k';
+        out += `<span class="${cls}">${esc(m[0])}</span>`;
+        ult = re.lastIndex;
+      }
+      return out + esc(linha.slice(ult));
+    }
+    Promise.all([
+      fetch('../assets/app.js').then((r) => r.text()).then((t) => ({ nome: 'assets/app.js', t, py: false })),
+      fetch('../scripts/processa_tri.py').then((r) => r.text()).then((t) => ({ nome: 'scripts/processa_tri.py', t, py: true })),
+      fetch('../scripts/processa_sisu.py').then((r) => r.text()).then((t) => ({ nome: 'scripts/processa_sisu.py', t, py: true })),
+    ]).then((arqs) => {
+      const pre = $('codigo'); let html = '', n = 0; const marcos = [];
+      for (const a of arqs) {
+        marcos.push([n, a.nome]);
+        html += `<span class="l tk-c" data-n=""> </span><span class="l tk-c" data-n="">// ───── ${a.nome} ─────</span>`;
+        for (const l of a.t.split('\n')) { n++; html += `<span class="l" data-n="${n}">${realca(l, a.py) || ' '}</span>`; }
+      }
+      pre.innerHTML = html;
+      $('nlinhas').textContent = n.toLocaleString('pt-BR');
+      // rolagem automática do código quando a janela aparece
+      let ativo = false;
+      new IntersectionObserver((es) => { ativo = es[0].isIntersecting; }, { threshold: 0.2 }).observe(pre);
+      const alturaLinha = 17;
+      const tick = () => {
+        if (ativo) {
+          pre.scrollTop += 1.6;
+          if (pre.scrollTop + pre.clientHeight >= pre.scrollHeight - 2) pre.scrollTop = 0;
+          const linhaAtual = Math.floor(pre.scrollTop / alturaLinha);
+          const atual = marcos.filter(([ini]) => ini <= linhaAtual).pop();
+          if (atual) $('arq').textContent = atual[1];
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }).catch(() => {});
+
+    /* modo gravação: rola a página sozinha, devagar; toque na tela para parar */
+    let gravando = false, ultimo = 0;
+    const rolar = (t) => {
+      if (!gravando) return;
+      if (ultimo) window.scrollBy(0, (t - ultimo) * 0.06);
+      ultimo = t;
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) { parar(); return; }
+      requestAnimationFrame(rolar);
+    };
+    const parar = () => { gravando = false; ultimo = 0; document.body.classList.remove('gravando'); $('gravar').textContent = '▶ modo gravação'; };
+    $('gravar').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (gravando) { parar(); return; }
+      window.scrollTo(0, 0);
+      gravando = true; document.body.classList.add('gravando'); $('gravar').textContent = '■ parar';
+      setTimeout(() => requestAnimationFrame(rolar), 1200);
+    });
+    document.addEventListener('pointerdown', (e) => { if (gravando && e.target.id !== 'gravar') parar(); });
+  })();
+  </script>
+</body>
+</html>
