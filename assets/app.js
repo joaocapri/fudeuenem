@@ -808,12 +808,22 @@
     });
 
     // Popup "como funciona" (botão ? no topo)
-    const info = $('info'), abrirInfo = () => {
+    // Abre sozinho só na 1ª visita (lembrado no próprio celular; se não der para guardar, abre de novo)
+    const CHAVE_INFO = 'fudeuenem_viu_info';
+    const info = $('info'), abrirInfo = (auto) => {
       info.hidden = false; document.body.classList.add('com-popup');
       info.scrollTop = 0;
-      $('info_tit').focus({ preventScroll: true }); evento('abriu/como funciona');
+      $('info_tit').focus({ preventScroll: true });
+      evento(auto === true ? 'abriu/como funciona (1ª visita)' : 'abriu/como funciona');
     };
-    const fecharInfo = () => { info.hidden = true; document.body.classList.remove('com-popup'); $('btn_info').focus(); };
+    const fecharInfo = () => {
+      info.hidden = true; document.body.classList.remove('com-popup');
+      try { localStorage.setItem(CHAVE_INFO, '1'); } catch (e) { /* sem armazenamento: tudo bem */ }
+      $('btn_info').focus({ preventScroll: true });
+    };
+    let jaViu = false;
+    try { jaViu = localStorage.getItem(CHAVE_INFO) === '1'; } catch (e) { /* sem armazenamento */ }
+    if (!jaViu) setTimeout(() => abrirInfo(true), 600);
     $('btn_info').addEventListener('click', abrirInfo);
     $('info_fechar').addEventListener('click', fecharInfo);
     info.addEventListener('click', (e) => { if (e.target === info) fecharInfo(); });

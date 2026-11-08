@@ -307,3 +307,7 @@ body.com-popup { overflow: hidden; }
   .passos, .importante { font-size: 14px; }
 }
 #info_tit:focus { outline: none; }
+
+.volta { border: 2px dashed var(--tinta); border-radius: 10px; padding: 10px 12px; font-size: 15px; line-height: 1.4; }
+.volta p { margin: 0; }
+.volta .rot { margin-bottom: 4px; }
