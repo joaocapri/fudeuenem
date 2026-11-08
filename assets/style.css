@@ -315,3 +315,13 @@ body.com-popup { overflow: hidden; }
 .topo h1 .ast { color: var(--tinta-2); font-weight: 700; }
 .nota-ast { margin: -4px 0 0; font: 600 12px var(--f-mono); letter-spacing: .02em; color: var(--tinta-2); }
 @media (max-width: 400px) { .topo h1 { font-size: 34px; } }
+
+/* ---------- passos com pergunta como título ---------- */
+#busca_box { gap: 34px; }
+.bloco-tit { margin: 0 0 -6px; font: 800 21px/1.15 var(--f-display); font-stretch: 90%; text-wrap: balance; }
+.bloco-tit label { display: inline; margin: 0; font: inherit; }
+.bloco.bloqueado .bloco-tit { color: var(--tinta-2); }
+.bloco.bloqueado { border-color: #bdbdbd; box-shadow: 4px 4px 0 #bdbdbd; }
+.bloco.bloqueado .bloco-tab { background: #eeeeee; border-color: #bdbdbd; color: var(--tinta-2); }
+.campo input:disabled { border-bottom-color: #cfcfcf; background: transparent; cursor: not-allowed; }
+.campo input:disabled::placeholder { color: #a8a8a8; }

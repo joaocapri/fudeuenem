@@ -261,7 +261,7 @@
     $('ies_lista').innerHTML = ''; $('ies_box').hidden = true;
     $('ies_sel').hidden = false;
     $('ies_sel').innerHTML = `<div class="t1">${esc(s)}</div><button type="button" class="trocar" data-trocar="ies">trocar</button><div class="t2">${esc(titulo(n))}</div>`;
-    $('curso_box').hidden = false; $('curso_busca').value = '';
+    liberarCurso(true); $('curso_busca').value = '';
     listarCursos('');
     limparCurso();
   }
@@ -312,6 +312,16 @@
     };
     $('btn_ok').disabled = false;
     if (!$('etapa2').hidden) atualizarMeta();
+  }
+
+  // Passo 3 fica visível o tempo todo, mas só libera depois de escolher a universidade
+  function liberarCurso(sim) {
+    const inp = $('curso_busca');
+    inp.disabled = !sim;
+    inp.placeholder = sim ? 'medicina, direito…' : 'escolha a universidade primeiro';
+    $('bloco_curso').classList.toggle('bloqueado', !sim);
+    $('curso_box').hidden = false;
+    if (!sim) { inp.value = ''; $('curso_lista').innerHTML = ''; }
   }
 
   function limparCurso() {
@@ -800,7 +810,7 @@
       const b = e.target.closest('[data-trocar]'); if (!b) return;
       limparCurso();
       if (b.dataset.trocar === 'ies') {
-        $('ies_sel').hidden = true; $('curso_box').hidden = true; $('ies_box').hidden = false;
+        $('ies_sel').hidden = true; $('ies_box').hidden = false; liberarCurso(false);
         $('ies_busca').value = ''; $('ies_busca').focus();
       } else {
         $('curso_box').hidden = false; $('curso_busca').value = ''; listarCursos(''); $('curso_busca').focus();

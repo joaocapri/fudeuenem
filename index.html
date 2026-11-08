@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=18">
+  <link rel="stylesheet" href="assets/style.css?v=19">
 
   <!-- ===== ANALYTICS: GoatCounter (gratuito, sem cookies, sem dados pessoais).
        Painel: https://fudeuenem.goatcounter.com — se criar a conta com outro código,
@@ -48,9 +48,9 @@
 
     <!-- ============ ETAPA 1: 1º DIA + CURSO ============ -->
     <section class="etapa" id="etapa1">
-      <p class="instrucao">Coloque quantas questões você <mark class="grifo">acertou no 1º dia</mark> e escolha o curso.</p>
       <div class="bloco">
-        <p class="bloco-tab">1 · Seu 1º dia</p>
+        <p class="bloco-tab">Passo 1</p>
+        <h2 class="bloco-tit">Quantas questões acertou no <mark class="grifo">1º dia</mark>?</h2>
       <div class="dupla">
         <div class="contador">
           <label class="rot" for="lc">Linguagens</label>
@@ -73,22 +73,26 @@
       </div>
       </div>
 
-      <div class="bloco">
-        <p class="bloco-tab">2 · Seu curso</p>
       <div id="busca_box">
-        <div class="campo" id="ies_box">
-          <label class="rot" for="ies_busca">Faculdade</label>
-          <input type="search" id="ies_busca" placeholder="UFPR, UTFPR, UFMG…" autocomplete="off">
-          <ul class="lista" id="ies_lista" role="listbox"></ul>
+        <div class="bloco">
+          <p class="bloco-tab">Passo 2</p>
+          <h2 class="bloco-tit"><label for="ies_busca">Qual universidade?</label></h2>
+          <div class="campo" id="ies_box">
+            <input type="search" id="ies_busca" placeholder="UFPR, UTFPR, UFMG…" autocomplete="off">
+            <ul class="lista" id="ies_lista" role="listbox"></ul>
+          </div>
+          <div class="escolhido" id="ies_sel" hidden></div>
         </div>
-        <div class="escolhido" id="ies_sel" hidden></div>
 
-        <div class="campo" id="curso_box" hidden>
-          <label class="rot" for="curso_busca">Curso</label>
-          <input type="search" id="curso_busca" placeholder="medicina, direito…" autocomplete="off">
-          <ul class="lista" id="curso_lista" role="listbox"></ul>
+        <div class="bloco bloqueado" id="bloco_curso">
+          <p class="bloco-tab">Passo 3</p>
+          <h2 class="bloco-tit"><label for="curso_busca">Qual curso?</label></h2>
+          <div class="campo" id="curso_box">
+            <input type="search" id="curso_busca" placeholder="escolha a universidade primeiro" autocomplete="off" disabled>
+            <ul class="lista" id="curso_lista" role="listbox"></ul>
+          </div>
+          <div class="escolhido" id="curso_sel" hidden></div>
         </div>
-        <div class="escolhido" id="curso_sel" hidden></div>
       </div>
 
       <details class="manual" id="manual">
@@ -120,7 +124,6 @@
         <p class="erro" id="m_erro" role="alert"></p>
         <button type="button" class="acao tatil" id="m_usar">Ver minha meta</button>
       </details>
-      </div>
 
       <button type="button" class="acao tatil" id="btn_ok" disabled>Ver minha meta</button>
     </section>
@@ -134,7 +137,7 @@
     <!-- ============ ETAPA 2: REDAÇÃO + BALANÇA ============ -->
     <section class="etapa" id="etapa2" hidden>
       <div class="bloco">
-        <p class="bloco-tab">3 · Sua redação</p>
+        <p class="bloco-tab">Passo 4</p>
       <div class="redacao">
         <label class="pergunta" for="red">Quanto você acha que tirou na <mark class="grifo">redação</mark>?</label>
         <output id="red_v" for="red">720</output>
@@ -252,7 +255,7 @@
     </div>
   </div>
 
-  <script src="assets/config.js?v=18"></script>
-  <script src="assets/app.js?v=18"></script>
+  <script src="assets/config.js?v=19"></script>
+  <script src="assets/app.js?v=19"></script>
 </body>
 </html>
