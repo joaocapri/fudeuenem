@@ -195,7 +195,7 @@
     // slider de equilíbrio (esquerda = mais Matemática)
     const eq = $('equilibrio'), temBalanca = R.wMT && R.wCN && R.kMax > R.kMin;
     $('equilibrio_box').hidden = !temBalanca;
-    $('res_sub').innerHTML = `Para passar em <b>${esc(c.nome)}</b>${c.sobrou ? '' : ' (1ª chamada)'}, acerte:`;
+    $('res_sub').innerHTML = `Para passar em <b>${esc(c.nome)}</b>${c.sobrou ? '' : ' na 1ª chamada'}:`;
     const nTxt = (k) => (k > 45 ? `<b class="estourou">${k}</b>` : `<b>${k}</b>`);
     $('frase_troca').innerHTML = temBalanca
       ? `Se acertar ${nTxt(R.kMT)} em Matemática, precisa de ${nTxt(R.kCN)} em Natureza.`
@@ -350,7 +350,7 @@
     // define o curso e segue para o passo 3 (acertos); a meta sai pelo botão principal
     $('btn_ok').disabled = false;
     erro.textContent = '';
-    $('m_ok').textContent = `Curso definido: ${S.curso.nome} (corte ${fmt2(corte)}). Agora preencha o passo 3.`;
+    $('m_ok').textContent = `Curso definido: ${S.curso.nome} (corte ${fmt2(corte)}). Agora toque em Ver minha meta.`;
     $('m_ok').hidden = false;
   }
 
@@ -358,7 +358,7 @@
     if (!S.curso) return;
     const lc = clamp(+$('lc').value || 0, 0, 45), ch = clamp(+$('ch').value || 0, 0, 45);
     S.desvio = 0;
-    $('resumo_txt').innerHTML = `LC <b>${lc}</b> · CH <b>${ch}</b> · <b>${esc(S.curso.nome)}</b> · ${S.curso.sobrou ? '<b>sem nota de corte em 2025</b>' : `corte <b>${fmt2(S.curso.corte)}</b>`}${S.curso.modalidade ? ' (cota)' : ''}`;
+    $('resumo_txt').innerHTML = `<b>${esc(S.curso.nome)}</b> · ${S.curso.sobrou ? '<b>sem nota de corte em 2025</b>' : `corte <b>${fmt2(S.curso.corte)}</b>`}${S.curso.modalidade ? ' (cota)' : ''}`;
     $('etapa1').hidden = true; $('resumo').hidden = false;
     for (const id of ['etapa2', 'etapa3', 'etapa4']) $(id).hidden = false;
     document.body.classList.add('modo-resultado');
@@ -369,8 +369,6 @@
     evento(r ? `curso/${r.s}/${titulo(r.k)} (${r.m})` : 'curso/digitado à mão', r ? `${titulo(r.k)} · ${r.s} · ${r.m}` : 'Curso digitado à mão');
     evento(`faculdade/${r ? r.s : 'digitado à mão'}`);
     evento(`modalidade/${!r ? 'digitado à mão' : S.curso.sobrou ? 'sem nota de corte' : S.curso.modalidade ? 'cota' : 'ampla'}`);
-    const t = lc + ch, f = Math.floor(t / 10) * 10;
-    evento(`acertos-1o-dia/LC+CH ${f}-${f + 9} (de 90)`);
   }
 
   function editar() {
@@ -781,8 +779,8 @@
 
     for (const id of ['lc', 'ch']) {
       const n = $(id);
-      n.addEventListener('input', atualizarEstimativas);
-      n.addEventListener('blur', () => { n.value = clamp(Math.round(+n.value || 0), 0, 45); atualizarEstimativas(); });
+      n.addEventListener('input', () => { atualizarEstimativas(); atualizarMeta(); });
+      n.addEventListener('blur', () => { n.value = clamp(Math.round(+n.value || 0), 0, 45); atualizarEstimativas(); atualizarMeta(); });
     }
     // Botões + e −: um toque = 1 passo; segurar = repete, acelerando.
     // (o zoom por toque duplo é desligado no CSS com touch-action: manipulation)
@@ -791,6 +789,7 @@
         const n = $(b.dataset.alvo);
         n.value = clamp((+n.value || 0) + +b.dataset.d, 0, 45);
         atualizarEstimativas();
+        atualizarMeta();
       };
       let tmr = null, veioDoToque = false;
       const parar = () => { clearTimeout(tmr); tmr = null; };
@@ -875,6 +874,7 @@
       compartilhar(S.cardBlob, 'minha-meta-enem.png', 'Minha meta no 2º dia do ENEM');
       const R = S.ultimo || {};
       evento('compartilhou/card');
+      { const t = (R.lc || 0) + (R.ch || 0), f = Math.floor(t / 10) * 10; evento(`acertos-1o-dia/LC+CH ${f}-${f + 9} (de 90)`); }
       if (R.kMT !== null && R.kMT !== undefined) evento(`meta-compartilhada/Matemática ${faixa10(R.kMT)}`);
       if (R.kCN !== null && R.kCN !== undefined) evento(`meta-compartilhada/Natureza ${faixa10(R.kCN)}`);
       evento(`redacao-estimada/${faixa10(+$('red').value / 20).replace(/\d+/g, (d) => +d * 20)}`);

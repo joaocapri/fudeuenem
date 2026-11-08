@@ -372,3 +372,9 @@ body.modo-resultado .prato { height: 126px; }
 body.modo-resultado .travessao { top: 146px; }
 body.modo-resultado .pivo { top: 149px; }
 body.modo-resultado .prato .n { font-size: 72px; }
+
+/* ---------- tela 2: ficha do 1º dia (acertos + redação) ---------- */
+#ficha_1dia { gap: 16px; }
+#ficha_1dia .redacao.compacta { border-top: 1px dashed #cfcfcf; padding-top: 12px; }
+body.modo-resultado .res-topo + .bloco { margin-top: 10px; }
+body.modo-resultado #etapa2 > .res-topo:not(:first-child) { margin-top: 14px; }

@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=21">
+  <link rel="stylesheet" href="assets/style.css?v=22">
 
   <!-- ===== ANALYTICS: GoatCounter (gratuito, sem cookies, sem dados pessoais).
        Painel: https://fudeuenem.goatcounter.com — se criar a conta com outro código,
@@ -46,7 +46,7 @@
       <p class="autor">Prof. João Capri <span data-arroba></span></p>
     </header>
 
-    <!-- ============ ETAPA 1: UNIVERSIDADE, CURSO E ACERTOS ============ -->
+    <!-- ============ ETAPA 1: UNIVERSIDADE E CURSO ============ -->
     <section class="etapa" id="etapa1">
       <div id="busca_box">
         <div class="bloco">
@@ -101,9 +101,25 @@
         <p class="m-ok" id="m_ok" role="status" hidden></p>
       </details>
 
-      <div class="bloco">
-        <p class="bloco-tab">Passo 3</p>
-        <h2 class="bloco-tit">Quantas questões acertou no <mark class="grifo">1º dia</mark>?</h2>
+      <button type="button" class="acao tatil" id="btn_ok" disabled>Ver minha meta</button>
+    </section>
+
+    <!-- Resumo depois do OK -->
+    <div class="resumo" id="resumo" hidden>
+      <p id="resumo_txt"></p>
+      <button type="button" id="btn_editar">editar</button>
+    </div>
+
+    <!-- ============ ETAPA 2: 1º DIA (acertos + redação) → META (balança) ============ -->
+    <section class="etapa" id="etapa2" hidden>
+      <header class="res-topo">
+        <h2 class="res-tit">Agora, o seu <mark class="grifo">1º dia</mark></h2>
+        <p class="res-sub">Ajuste e a meta muda na hora.</p>
+      </header>
+
+      <div class="bloco" id="ficha_1dia">
+        <p class="bloco-tab">Seu 1º dia</p>
+        <h3 class="bloco-tit">Quantas questões acertou?</h3>
       <div class="dupla">
         <div class="contador">
           <label class="rot" for="lc">Linguagens</label>
@@ -124,29 +140,17 @@
           <p class="aux" id="ch_est">acertos de 45</p>
         </div>
       </div>
+        <div class="redacao compacta">
+          <label class="pergunta" for="red">Quanto acha que tirou na <mark class="grifo">redação</mark>?</label>
+          <output id="red_v" for="red">720</output>
+          <input type="range" id="red" min="0" max="1000" step="20" value="720">
+        </div>
       </div>
 
-      <button type="button" class="acao tatil" id="btn_ok" disabled>Ver minha meta</button>
-    </section>
-
-    <!-- Resumo depois do OK -->
-    <div class="resumo" id="resumo" hidden>
-      <p id="resumo_txt"></p>
-      <button type="button" id="btn_editar">editar</button>
-    </div>
-
-    <!-- ============ ETAPA 2: REDAÇÃO + BALANÇA ============ -->
-    <section class="etapa" id="etapa2" hidden>
       <header class="res-topo">
-        <h2 class="res-tit">Sua meta para <mark class="grifo">domingo</mark></h2>
+        <h2 class="res-tit">Então, no domingo, <mark class="grifo">acerte</mark>:</h2>
         <p class="res-sub" id="res_sub"></p>
       </header>
-
-      <div class="redacao compacta">
-        <label class="pergunta" for="red">Quanto acha que tirou na <mark class="grifo">redação</mark>?</label>
-        <output id="red_v" for="red">720</output>
-        <input type="range" id="red" min="0" max="1000" step="20" value="720">
-      </div>
 
       <div class="balanca" id="balanca" aria-live="polite">
         <div class="prato" id="prato_mt">
@@ -259,7 +263,7 @@
     </div>
   </div>
 
-  <script src="assets/config.js?v=21"></script>
-  <script src="assets/app.js?v=21"></script>
+  <script src="assets/config.js?v=22"></script>
+  <script src="assets/app.js?v=22"></script>
 </body>
 </html>
