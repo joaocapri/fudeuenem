@@ -311,6 +311,7 @@
       corte: o[1], sobrou: !(o[1] > 0), modalidade: o[0] === 0 ? '' : 'cota', edicao: S.cursos.meta && S.cursos.meta.edicao_corte,
     };
     $('btn_ok').disabled = false;
+    $('m_ok').hidden = true;
     if (!$('etapa2').hidden) atualizarMeta();
   }
 
@@ -339,8 +340,13 @@
     document.querySelectorAll('.m_min').forEach((el) => { const v = +el.value || 0; min[el.dataset.a] = v; if (v) temMin = true; });
     if (!AREAS.some((a) => pesos[a] > 0)) { erro.textContent = 'Pelo menos um peso precisa ser maior que zero.'; return; }
     S.ofertaSel = null;
+    limparCurso();   // o curso digitado substitui o escolhido na lista
     S.curso = { nome: $('m_nome').value.trim() || 'Meu curso', pesos, min: temMin ? min : null, mediaMin: 0, corte, modalidade: '', edicao: '' };
-    confirmar();
+    // define o curso e segue para o passo 3 (acertos); a meta sai pelo botão principal
+    $('btn_ok').disabled = false;
+    erro.textContent = '';
+    $('m_ok').textContent = `Curso definido: ${S.curso.nome} (corte ${fmt2(corte)}). Agora preencha o passo 3.`;
+    $('m_ok').hidden = false;
   }
 
   function confirmar() {
@@ -907,7 +913,7 @@
       S.cursos = cursos.value; prepararBase();
       fontes.push(`cortes e pesos: ${S.cursos.meta.edicao_corte} (MEC), ${S.cursos.cursos.length.toLocaleString('pt-BR')} cursos`);
     } else {
-      $('busca_box').hidden = true; $('btn_ok').hidden = true;
+      $('busca_box').hidden = true;
       $('manual').open = true;
     }
     $('fontes').textContent = fontes.join(' · ') + '.';

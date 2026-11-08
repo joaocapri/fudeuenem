@@ -325,3 +325,5 @@ body.com-popup { overflow: hidden; }
 .bloco.bloqueado .bloco-tab { background: #eeeeee; border-color: #bdbdbd; color: var(--tinta-2); }
 .campo input:disabled { border-bottom-color: #cfcfcf; background: transparent; cursor: not-allowed; }
 .campo input:disabled::placeholder { color: #a8a8a8; }
+.m-ok { margin: 0; font-size: 14px; font-weight: 600; background: #fffbe0; border-left: 4px solid var(--marca); padding: 8px 10px; }
+.manual .rot { margin-bottom: 2px; } .manual .grade5 label { display: flex; flex-direction: column; gap: 2px; }
