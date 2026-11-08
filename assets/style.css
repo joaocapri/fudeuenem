@@ -327,3 +327,48 @@ body.com-popup { overflow: hidden; }
 .campo input:disabled::placeholder { color: #a8a8a8; }
 .m-ok { margin: 0; font-size: 14px; font-weight: 600; background: #fffbe0; border-left: 4px solid var(--marca); padding: 8px 10px; }
 .manual .rot { margin-bottom: 2px; } .manual .grade5 label { display: flex; flex-direction: column; gap: 2px; }
+
+/* ---------- tela de resultado ---------- */
+body.modo-resultado .topo { display: none; }
+body.modo-resultado .marca-topo { margin-bottom: -10px; }
+.res-topo { display: flex; flex-direction: column; gap: 6px; }
+.res-tit { margin: 0; font: 900 34px/1 var(--f-display); font-stretch: 80%; letter-spacing: -.01em; }
+.res-sub { margin: 0; font-size: 15px; color: var(--tinta-2); }
+.res-sub b { color: var(--tinta); }
+.redacao.compacta { border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); padding: 10px 0 4px; }
+.redacao.compacta .pergunta { font-size: 15px; margin: 0; align-self: center; }
+.redacao.compacta output { font-size: 38px; }
+.frase-troca { margin: 6px 0 0; text-align: center; font-size: 16px; line-height: 1.35; }
+.frase-troca:empty { display: none; }
+.frase-troca b { font-family: var(--f-display); font-size: 20px; background: linear-gradient(transparent 58%, var(--marca) 58%, var(--marca) 92%, transparent 92%); padding: 0 2px; }
+.frase-troca b.estourou { color: var(--estouro); }
+.dica-arraste { color: var(--tinta-2); font-size: 11px; }
+/* bolinha do slider da balança: amarela, com setas, para parecer "arrastável" */
+#equilibrio::-webkit-slider-thumb {
+  width: 40px; height: 40px; margin-top: -19px; border: 2.5px solid var(--tinta); background-color: var(--marca);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M9 20l6-6v12zM31 20l-6-6v12z' fill='%23121212'/%3E%3C/svg%3E");
+  background-size: 100% 100%; box-shadow: 2px 2px 0 var(--tinta);
+}
+#equilibrio::-moz-range-thumb {
+  width: 34px; height: 34px; border: 2.5px solid var(--tinta); background-color: var(--marca);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M9 20l6-6v12zM31 20l-6-6v12z' fill='%23121212'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+}
+#equilibrio { height: 46px; }
+@media (max-width: 400px) { .res-tit { font-size: 30px; } }
+
+/* tela de resultado mais compacta: meta, redação e balança na primeira tela */
+body.modo-resultado .wrap { gap: 18px; }
+body.modo-resultado #etapa2 { gap: 10px; }
+body.modo-resultado .marca-topo { margin-bottom: 0; }
+body.modo-resultado .resumo { border-top: 0; background: #f4f4f4; border-radius: 8px; padding: 8px 12px; }
+body.modo-resultado .resumo p { font-size: 13px; }
+.res-tit { font-size: 30px; }
+.redacao.compacta { border-top: 0; padding: 0; }
+.redacao.compacta output { font-size: 32px; }
+.redacao.compacta input { margin-top: 0; }
+body.modo-resultado .balanca { height: 190px; margin-top: 6px; }
+body.modo-resultado .prato { height: 126px; }
+body.modo-resultado .travessao { top: 146px; }
+body.modo-resultado .pivo { top: 149px; }
+body.modo-resultado .prato .n { font-size: 72px; }

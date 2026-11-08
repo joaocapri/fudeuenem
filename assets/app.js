@@ -195,6 +195,11 @@
     // slider de equilíbrio (esquerda = mais Matemática)
     const eq = $('equilibrio'), temBalanca = R.wMT && R.wCN && R.kMax > R.kMin;
     $('equilibrio_box').hidden = !temBalanca;
+    $('res_sub').innerHTML = `Para passar em <b>${esc(c.nome)}</b>${c.sobrou ? '' : ' (1ª chamada)'}, acerte:`;
+    const nTxt = (k) => (k > 45 ? `<b class="estourou">${k}</b>` : `<b>${k}</b>`);
+    $('frase_troca').innerHTML = temBalanca
+      ? `Se acertar ${nTxt(R.kMT)} em Matemática, precisa de ${nTxt(R.kCN)} em Natureza.`
+      : '';
     if (temBalanca) { eq.min = 0; eq.max = R.kMax - R.kMin; eq.value = R.kMax - R.kMT; }
 
     // observações curtas: eliminação (vermelho), mínimos e média do curso
@@ -356,8 +361,9 @@
     $('resumo_txt').innerHTML = `LC <b>${lc}</b> · CH <b>${ch}</b> · <b>${esc(S.curso.nome)}</b> · ${S.curso.sobrou ? '<b>sem nota de corte em 2025</b>' : `corte <b>${fmt2(S.curso.corte)}</b>`}${S.curso.modalidade ? ' (cota)' : ''}`;
     $('etapa1').hidden = true; $('resumo').hidden = false;
     for (const id of ['etapa2', 'etapa3', 'etapa4']) $(id).hidden = false;
+    document.body.classList.add('modo-resultado');
     atualizarMeta();
-    $('resumo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     const r = S.ofertaSel;
     evento(r ? `curso/${r.s}/${titulo(r.k)} (${r.m})` : 'curso/digitado à mão', r ? `${titulo(r.k)} · ${r.s} · ${r.m}` : 'Curso digitado à mão');
@@ -368,6 +374,7 @@
   }
 
   function editar() {
+    document.body.classList.remove('modo-resultado');
     $('etapa1').hidden = false; $('resumo').hidden = true;
     $('plano_painel').hidden = true; S.planoArea = null;
     document.querySelectorAll('.plano-btn').forEach((b) => b.classList.remove('ativo'));

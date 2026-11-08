@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=20">
+  <link rel="stylesheet" href="assets/style.css?v=21">
 
   <!-- ===== ANALYTICS: GoatCounter (gratuito, sem cookies, sem dados pessoais).
        Painel: https://fudeuenem.goatcounter.com — se criar a conta com outro código,
@@ -137,13 +137,15 @@
 
     <!-- ============ ETAPA 2: REDAÇÃO + BALANÇA ============ -->
     <section class="etapa" id="etapa2" hidden>
-      <div class="bloco">
-        <p class="bloco-tab">Passo 4</p>
-      <div class="redacao">
-        <label class="pergunta" for="red">Quanto você acha que tirou na <mark class="grifo">redação</mark>?</label>
+      <header class="res-topo">
+        <h2 class="res-tit">Sua meta para <mark class="grifo">domingo</mark></h2>
+        <p class="res-sub" id="res_sub"></p>
+      </header>
+
+      <div class="redacao compacta">
+        <label class="pergunta" for="red">Quanto acha que tirou na <mark class="grifo">redação</mark>?</label>
         <output id="red_v" for="red">720</output>
         <input type="range" id="red" min="0" max="1000" step="20" value="720">
-      </div>
       </div>
 
       <div class="balanca" id="balanca" aria-live="polite">
@@ -164,7 +166,8 @@
       <div class="equilibrio" id="equilibrio_box">
         <input type="range" id="equilibrio" min="0" max="10" value="5" aria-label="Equilíbrio entre Matemática e Natureza">
         <div class="pontas"><span>← mais Matemática</span><span>mais Natureza →</span></div>
-        <p class="dica-arraste"><span class="seta">⟵</span> arraste para trocar acertos entre as áreas <span class="seta">⟶</span></p>
+        <p class="frase-troca" id="frase_troca"></p>
+        <p class="dica-arraste"><span class="seta">⟵</span> arraste a bolinha amarela para ver outras combinações <span class="seta">⟶</span></p>
       </div>
       <p class="nota-rodape" id="r_aviso"></p>
       <ul class="disclaimer">
@@ -256,7 +259,7 @@
     </div>
   </div>
 
-  <script src="assets/config.js?v=20"></script>
-  <script src="assets/app.js?v=20"></script>
+  <script src="assets/config.js?v=21"></script>
+  <script src="assets/app.js?v=21"></script>
 </body>
 </html>
