@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=14">
+  <link rel="stylesheet" href="assets/style.css?v=15">
 
   <!-- ===== ANALYTICS: GoatCounter (gratuito, sem cookies, sem dados pessoais).
        Painel: https://fudeuenem.goatcounter.com — se criar a conta com outro código,
@@ -36,6 +36,7 @@
         <span class="logo-txt">FUDEU <mark class="grifo">ENEM</mark>?!</span>
         <span class="logo-sub">Calculadora inteligente · ENEM</span>
       </div>
+      <button type="button" class="btn-info" id="btn_info" aria-haspopup="dialog" aria-controls="info" aria-label="Como funciona">?</button>
     </div>
 
     <header class="topo">
@@ -165,7 +166,8 @@
         <li><b>Estimativa, não garantia.</b></li>
         <li>Nota = mediana de quem teve os mesmos acertos no ENEM de 2022 a 2025 (Inep), com mais peso para os anos recentes.</li>
         <li>Na TRI, a nota depende de quais questões você acerta, não só de quantas.</li>
-        <li>Mínimos eliminatórios calculados com folga. Cortes do Sisu 2025.</li>
+        <li>Corte = nota do último aprovado na chamada regular do Sisu 2025. Pela lista de espera costuma ser menor.</li>
+        <li>Mínimos eliminatórios calculados com folga.</li>
       </ul>
     </section>
 
@@ -226,7 +228,26 @@
     </footer>
   </main>
 
-  <script src="assets/config.js?v=14"></script>
-  <script src="assets/app.js?v=14"></script>
+  <!-- Popup "como funciona" -->
+  <div class="popup" id="info" role="dialog" aria-modal="true" aria-labelledby="info_tit" hidden>
+    <div class="popup-caixa">
+      <p class="bloco-tab">Como funciona</p>
+      <h2 id="info_tit" tabindex="-1">Sua meta para o <mark class="grifo">2º dia</mark> em 4 passos</h2>
+      <ol class="passos">
+        <li><b>Seus acertos do 1º dia</b> viram nota pela TRI, com base em 12 milhões de participantes do ENEM de 2022 a 2025.</li>
+        <li><b>Você escolhe o curso</b> e a gente puxa a nota de corte, os pesos e as notas mínimas do Sisu 2025.</li>
+        <li><b>Você chuta a redação</b> e a calculadora mostra quantas precisa acertar em Matemática e em Natureza.</li>
+        <li><b>A balança</b> troca acertos entre as duas áreas: indo melhor em uma, precisa de menos na outra.</li>
+      </ol>
+      <div class="importante">
+        <p><b>A meta é para passar na <mark class="grifo">1ª chamada</mark>.</b> A nota de corte é a do último aprovado na chamada regular do Sisu. Depois vem a lista de espera, que costuma rodar bastante: muita gente entra com nota menor.</p>
+      </div>
+      <p class="aux">É uma estimativa: na TRI, a nota depende de quais questões você acerta, não só de quantas. As notas de corte mudam a cada ano.</p>
+      <button type="button" class="acao tatil" id="info_fechar">Entendi</button>
+    </div>
+  </div>
+
+  <script src="assets/config.js?v=15"></script>
+  <script src="assets/app.js?v=15"></script>
 </body>
 </html>

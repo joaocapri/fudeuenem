@@ -210,7 +210,7 @@
     if (R.minCN) obs.push(`mínimo em Natureza: ${fmt0(R.minCN)} (≥ ${R.kMinCN} acertos)`);
     if (c.mediaMin) obs.push(`média mínima do curso: ${fmt0(c.mediaMin)}`);
     if (obs.length) obs[obs.length - 1] += ' · já incluído na meta';
-    if (c.sobrou) obs.unshift((R.kMT || R.kCN) ? 'sobrou vaga em 2025: basta cumprir o mínimo' : 'sobrou vaga em 2025: você já passaria');
+    if (c.sobrou) obs.unshift((R.kMT || R.kCN) ? 'sem nota de corte em 2025 (poucos inscritos): basta cumprir o mínimo' : 'sem nota de corte em 2025 (poucos inscritos): a vaga pode ser sua');
     else if (R.kMT === 0 && R.kCN === 0) obs.push('com esse 1º dia, já daria');
     $('r_aviso').innerHTML = [...alerta.map((x) => `<span class="alerta">${esc(x)}</span>`), ...obs.map(esc)].join('<br>');
 
@@ -229,7 +229,7 @@
      Registro em cursos.json:
        {s: sigla, n: nome IES, c: campus, m: município, u: UF, k: curso, g: grau, t: turno,
         p: [LC,CH,CN,MT,RED], mn: [mínimos]|null, mm: média mínima|null,
-        o: [[índice da modalidade, nota de corte], ...]}   (corte 0 = sobrou vaga)
+        o: [[índice da modalidade, nota de corte], ...]}   (corte 0 = sem nota de corte: poucos inscritos)
      Nomes das modalidades: cursos.json → modalidades[] (0 = ampla concorrência).
      =================================================================== */
   const nomeMod = (i) => (S.cursos.modalidades && S.cursos.modalidades[i]) || String(i);
@@ -290,7 +290,7 @@
     // padrão: ampla concorrência (ou a primeira modalidade listada)
     const sel = Math.max(0, r.o.findIndex((o) => o[0] === 0));
     const opcoes = r.o.map((o, j) =>
-      `<option value="${j}" ${j === sel ? 'selected' : ''}>${esc(nomeMod(o[0]))}: ${o[1] > 0 ? fmt2(o[1]) : 'sobrou vaga em 2025'}</option>`).join('');
+      `<option value="${j}" ${j === sel ? 'selected' : ''}>${esc(nomeMod(o[0]))}: ${o[1] > 0 ? fmt2(o[1]) : 'sem corte em 2025'}</option>`).join('');
     const ab = ['LC', 'CH', 'CN', 'MT', 'RED'];
     const min = r.mn ? ab.map((a, j) => r.mn[j] ? `${a} ${r.mn[j]}` : '').filter(Boolean).join(' · ') : '';
     $('curso_sel').hidden = false;
@@ -337,7 +337,7 @@
     if (!S.curso) return;
     const lc = clamp(+$('lc').value || 0, 0, 45), ch = clamp(+$('ch').value || 0, 0, 45);
     S.desvio = 0;
-    $('resumo_txt').innerHTML = `LC <b>${lc}</b> · CH <b>${ch}</b> · <b>${esc(S.curso.nome)}</b> · ${S.curso.sobrou ? '<b>sobrou vaga em 2025</b>' : `corte <b>${fmt2(S.curso.corte)}</b>`}${S.curso.modalidade ? ' (cota)' : ''}`;
+    $('resumo_txt').innerHTML = `LC <b>${lc}</b> · CH <b>${ch}</b> · <b>${esc(S.curso.nome)}</b> · ${S.curso.sobrou ? '<b>sem nota de corte em 2025</b>' : `corte <b>${fmt2(S.curso.corte)}</b>`}${S.curso.modalidade ? ' (cota)' : ''}`;
     $('etapa1').hidden = true; $('resumo').hidden = false;
     for (const id of ['etapa2', 'etapa3', 'etapa4']) $(id).hidden = false;
     atualizarMeta();
@@ -346,7 +346,7 @@
     const r = S.ofertaSel;
     evento(r ? `curso/${r.s}/${titulo(r.k)} (${r.m})` : 'curso/digitado à mão', r ? `${titulo(r.k)} · ${r.s} · ${r.m}` : 'Curso digitado à mão');
     evento(`faculdade/${r ? r.s : 'digitado à mão'}`);
-    evento(`modalidade/${!r ? 'digitado à mão' : S.curso.sobrou ? 'sobrou vaga' : S.curso.modalidade ? 'cota' : 'ampla'}`);
+    evento(`modalidade/${!r ? 'digitado à mão' : S.curso.sobrou ? 'sem nota de corte' : S.curso.modalidade ? 'cota' : 'ampla'}`);
     const t = lc + ch, f = Math.floor(t / 10) * 10;
     evento(`acertos-1o-dia/LC+CH ${f}-${f + 9} (de 90)`);
   }
@@ -433,16 +433,17 @@
 
     let fimBloco;
     if (R.curso.sobrou && !R.kMT && !R.kCN) {
-      // sobrou vaga e não há nota mínima a cumprir: "já passaria"
+      // sem nota de corte em 2025 (poucos inscritos) e sem mínimo a cumprir: "pode ser sua"
       const y = fimTitulo + 300;
       ctx.textAlign = 'left';
       let tj = 170;
       ctx.font = `850 ${tj}px ${D}`;
-      while (ctx.measureText('JÁ PASSARIA').width > W - 2 * M && tj > 80) { tj -= 4; ctx.font = `850 ${tj}px ${D}`; }
-      marca('JÁ PASSARIA', M, y, tj);
-      ctx.fillStyle = TINTA; ctx.fillText('JÁ PASSARIA', M, y);
+      while (ctx.measureText('PODE SER SUA').width > W - 2 * M && tj > 80) { tj -= 4; ctx.font = `850 ${tj}px ${D}`; }
+      marca('PODE SER SUA', M, y, tj);
+      ctx.fillStyle = TINTA; ctx.fillText('PODE SER SUA', M, y);
       ctx.fillStyle = CINZA; ctx.font = `600 34px ${MONO}`;
-      ctx.fillText('em 2025 sobrou vaga nessa modalidade', M, y + 80);
+      ctx.fillText('sem nota de corte em 2025 nessa modalidade', M, y + 80);
+      ctx.fillText('(poucos inscritos)', M, y + 124);
       fimBloco = y + 160;
     } else {
       const base = fimTitulo + 340;
@@ -805,6 +806,18 @@
         $('curso_box').hidden = false; $('curso_busca').value = ''; listarCursos(''); $('curso_busca').focus();
       }
     });
+
+    // Popup "como funciona" (botão ? no topo)
+    const info = $('info'), abrirInfo = () => {
+      info.hidden = false; document.body.classList.add('com-popup');
+      info.scrollTop = 0;
+      $('info_tit').focus({ preventScroll: true }); evento('abriu/como funciona');
+    };
+    const fecharInfo = () => { info.hidden = true; document.body.classList.remove('com-popup'); $('btn_info').focus(); };
+    $('btn_info').addEventListener('click', abrirInfo);
+    $('info_fechar').addEventListener('click', fecharInfo);
+    info.addEventListener('click', (e) => { if (e.target === info) fecharInfo(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !info.hidden) fecharInfo(); });
 
     $('m_usar').addEventListener('click', usarManual);
     $('btn_ok').addEventListener('click', confirmar);
