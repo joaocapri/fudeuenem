@@ -314,3 +314,4 @@ body.com-popup { overflow: hidden; }
 
 .topo h1 .ast { color: var(--tinta-2); font-weight: 700; }
 .nota-ast { margin: -4px 0 0; font: 600 12px var(--f-mono); letter-spacing: .02em; color: var(--tinta-2); }
+@media (max-width: 400px) { .topo h1 { font-size: 34px; } }
