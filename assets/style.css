@@ -311,3 +311,6 @@ body.com-popup { overflow: hidden; }
 .volta { border: 2px dashed var(--tinta); border-radius: 10px; padding: 10px 12px; font-size: 15px; line-height: 1.4; }
 .volta p { margin: 0; }
 .volta .rot { margin-bottom: 4px; }
+
+.topo h1 .ast { color: var(--tinta-2); font-weight: 700; }
+.nota-ast { margin: -4px 0 0; font: 600 12px var(--f-mono); letter-spacing: .02em; color: var(--tinta-2); }
