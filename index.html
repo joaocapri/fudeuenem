@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=22">
+  <link rel="stylesheet" href="assets/style.css?v=23">
 
   <!-- ===== ANALYTICS: GoatCounter (gratuito, sem cookies, sem dados pessoais).
        Painel: https://fudeuenem.goatcounter.com — se criar a conta com outro código,
@@ -125,7 +125,7 @@
           <label class="rot" for="lc">Linguagens</label>
           <div class="ctl">
             <button type="button" class="pm" data-alvo="lc" data-d="-1" aria-label="Menos um acerto em Linguagens">−</button>
-            <input type="number" id="lc" min="0" max="45" value="28" inputmode="numeric" aria-describedby="lc_est">
+            <input type="number" id="lc" min="0" max="45" value="" placeholder="–" inputmode="numeric" aria-describedby="lc_est">
             <button type="button" class="pm" data-alvo="lc" data-d="1" aria-label="Mais um acerto em Linguagens">+</button>
           </div>
           <p class="aux" id="lc_est">acertos de 45</p>
@@ -134,7 +134,7 @@
           <label class="rot" for="ch">Humanas</label>
           <div class="ctl">
             <button type="button" class="pm" data-alvo="ch" data-d="-1" aria-label="Menos um acerto em Humanas">−</button>
-            <input type="number" id="ch" min="0" max="45" value="28" inputmode="numeric" aria-describedby="ch_est">
+            <input type="number" id="ch" min="0" max="45" value="" placeholder="–" inputmode="numeric" aria-describedby="ch_est">
             <button type="button" class="pm" data-alvo="ch" data-d="1" aria-label="Mais um acerto em Humanas">+</button>
           </div>
           <p class="aux" id="ch_est">acertos de 45</p>
@@ -174,13 +174,7 @@
         <p class="dica-arraste"><span class="seta">⟵</span> arraste a bolinha amarela para ver outras combinações <span class="seta">⟶</span></p>
       </div>
       <p class="nota-rodape" id="r_aviso"></p>
-      <ul class="disclaimer">
-        <li><b>Estimativa, não garantia.</b></li>
-        <li>Nota = mediana de quem teve os mesmos acertos no ENEM de 2022 a 2025 (Inep), com mais peso para os anos recentes.</li>
-        <li>Na TRI, a nota depende de quais questões você acerta, não só de quantas.</li>
-        <li>Corte = nota do último aprovado na chamada regular do Sisu 2025. Pela lista de espera costuma ser menor.</li>
-        <li>Mínimos eliminatórios calculados com folga.</li>
-      </ul>
+      <a class="acao tatil escuro btn-card" id="btn_card" href="#etapa3">Gerar meu card ↓</a>
     </section>
 
     <!-- ============ ETAPA 3: CARD ============ -->
@@ -263,7 +257,7 @@
     </div>
   </div>
 
-  <script src="assets/config.js?v=22"></script>
-  <script src="assets/app.js?v=22"></script>
+  <script src="assets/config.js?v=23"></script>
+  <script src="assets/app.js?v=23"></script>
 </body>
 </html>

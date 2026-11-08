@@ -163,6 +163,7 @@
   function atualizarEstimativas() {
     if (!S.tri) return;
     for (const [id, area] of [['lc', 'LC'], ['ch', 'CH']]) {
+      if ($(id).value.trim() === '') { $(id + '_est').textContent = 'acertos de 45'; continue; }
       const k = clamp(+$(id).value || 0, 0, 45);
       const [a, b] = faixa(area, k);
       $(id + '_est').textContent = `de 45 · ≈ ${fmt0(a)}–${fmt0(b)}`;
@@ -172,8 +173,25 @@
   function atualizarMeta() {
     if (!S.curso || !S.tri) return;
     $('red_v').textContent = $('red').value;
-    const R = calcular();
     const c = S.curso;
+    $('res_sub').innerHTML = `Para passar em <b>${esc(c.nome)}</b>${c.sobrou ? '' : ' na 1ª chamada'}:`;
+
+    // os campos de acertos começam vazios: só calcula depois de preenchidos
+    const naTela2 = !$('etapa2').hidden;
+    const pronto = $('lc').value.trim() !== '' && $('ch').value.trim() !== '';
+    $('btn_card').hidden = !pronto;
+    for (const id of ['etapa3', 'etapa4']) $(id).hidden = !(pronto && naTela2);
+    if (!pronto) {
+      for (const id of ['r_mt', 'r_cn']) { $(id).textContent = '?'; $(id).classList.remove('estourou'); }
+      $('travessao').style.transform = 'rotate(0deg)';
+      $('prato_mt').style.transform = $('prato_cn').style.transform = 'translateY(0)';
+      $('equilibrio_box').hidden = true;
+      $('frase_troca').innerHTML = 'Preencha quantas acertou em <b>Linguagens</b> e <b>Humanas</b> para ver sua meta.';
+      $('r_aviso').innerHTML = '';
+      S.ultimo = null;
+      return;
+    }
+    const R = calcular();
 
     // números nos pratos
     const pinta = (id, k) => {
@@ -195,7 +213,6 @@
     // slider de equilíbrio (esquerda = mais Matemática)
     const eq = $('equilibrio'), temBalanca = R.wMT && R.wCN && R.kMax > R.kMin;
     $('equilibrio_box').hidden = !temBalanca;
-    $('res_sub').innerHTML = `Para passar em <b>${esc(c.nome)}</b>${c.sobrou ? '' : ' na 1ª chamada'}:`;
     const nTxt = (k) => (k > 45 ? `<b class="estourou">${k}</b>` : `<b>${k}</b>`);
     $('frase_troca').innerHTML = temBalanca
       ? `Se acertar ${nTxt(R.kMT)} em Matemática, precisa de ${nTxt(R.kCN)} em Natureza.`
@@ -787,7 +804,7 @@
     document.querySelectorAll('.pm').forEach((b) => {
       const passo = () => {
         const n = $(b.dataset.alvo);
-        n.value = clamp((+n.value || 0) + +b.dataset.d, 0, 45);
+        n.value = n.value.trim() === '' ? (+b.dataset.d > 0 ? 1 : 0) : clamp((+n.value || 0) + +b.dataset.d, 0, 45);
         atualizarEstimativas();
         atualizarMeta();
       };
@@ -869,6 +886,11 @@
       gerarPlano();
       if (S.planoArea) evento(`plano/montou ${PLANOS[S.planoArea].nome}`);
       for (const id of marcados[S.planoArea] || []) evento(`assunto-fraco/${PLANOS[S.planoArea].nome}/${PLANOS[S.planoArea].topicos.find((t) => t.id === id).nome}`);
+    });
+    $('btn_card').addEventListener('click', (e) => {
+      e.preventDefault();
+      $('etapa3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      evento('clique/gerar meu card');
     });
     $('btn_share').addEventListener('click', () => {
       compartilhar(S.cardBlob, 'minha-meta-enem.png', 'Minha meta no 2º dia do ENEM');

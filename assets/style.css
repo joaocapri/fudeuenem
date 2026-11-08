@@ -378,3 +378,8 @@ body.modo-resultado .prato .n { font-size: 72px; }
 #ficha_1dia .redacao.compacta { border-top: 1px dashed #cfcfcf; padding-top: 12px; }
 body.modo-resultado .res-topo + .bloco { margin-top: 10px; }
 body.modo-resultado #etapa2 > .res-topo:not(:first-child) { margin-top: 14px; }
+
+/* botão "Gerar meu card" (âncora para o card) e campos vazios */
+.btn-card { margin-top: 6px; }
+.ctl input::placeholder { color: #c4c4c4; }
+.frase-troca b { font-family: var(--f-display); }
