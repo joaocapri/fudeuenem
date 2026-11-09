@@ -189,6 +189,7 @@
       $('frase_troca').innerHTML = 'Preencha quantas acertou em <b>Linguagens</b> e <b>Humanas</b> para ver sua meta.';
       $('r_aviso').innerHTML = '';
       S.ultimo = null;
+      $('onde').hidden = true;
       return;
     }
     const R = calcular();
@@ -241,9 +242,100 @@
     $('pb_mt').textContent = metaTxt(R.kMT);
     $('pb_cn').textContent = metaTxt(R.kCN);
 
-    S.ultimo = { ...R, curso: c };
+    const onde = ondeMaisPasso(R);
+    renderOnde(onde, R);
+    S.ultimo = { ...R, curso: c, ondeN: onde ? onde.nUniv : 0 };
     agendarCard();
     if (!$('plano_saida').hidden) gerarPlano();
+  }
+
+  /* ===================================================================
+     3b) ONDE MAIS EU PASSO?
+     Mesmo curso (mesmo nome e grau) nas outras universidades da base, na
+     mesma modalidade. Para cada uma, recalcula a nota do Sisu com os PESOS
+     dela e as notas do aluno (LC/CH estimadas, redação e a combinação de
+     MT/CN da balança) e confere corte, notas mínimas e média mínima.
+     =================================================================== */
+  let ondeFiltro = 'BR', ondeTodas = false;
+  const chaveCurso = (k) => norm(k).replace(/[^a-z0-9 ]/g, ' ').replace(/\b(de|da|do|das|dos|e|em)\b/g, ' ').replace(/\s+/g, ' ').trim();
+
+  function candidatos(r) {
+    if (S.candCache && S.candCache.id === r.id) return S.candCache.lista;
+    const chave = chaveCurso(r.k);
+    const lista = S.cursos.cursos.filter((x) => x !== r && x.g === r.g && chaveCurso(x.k) === chave);
+    S.candCache = { id: r.id, lista };
+    return lista;
+  }
+
+  function ondeMaisPasso(R) {
+    const c = S.curso, r = c && c.oferta;
+    if (!r || !S.cursos) return null;
+    const nMT = R.kMT === null ? notaNoPercentil('MT', 50) : notaDe('MT', Math.min(R.kMT, 45));
+    const nCN = R.kCN === null ? notaNoPercentil('CN', 50) : notaDe('CN', Math.min(R.kCN, 45));
+    const notas = [R.LC, R.CH, nCN, nMT, R.red];               // mesma ordem de cursos.json: LC, CH, CN, MT, RED
+    const media = notas.reduce((a, b) => a + b, 0) / 5;
+    const passa = [], quase = [];
+    for (const x of candidatos(r)) {
+      const o = x.o.find((m) => m[0] === c.modIdx);
+      if (!o) continue;
+      const W = x.p.reduce((a, b) => a + b, 0);
+      if (!W) continue;
+      const nota = x.p.reduce((s, w, i) => s + w * notas[i], 0) / W;
+      if (x.mn && x.mn.some((m, i) => m && notas[i] < m)) continue;   // eliminado por nota mínima
+      if (x.mm && media < x.mm) continue;                              // eliminado por média mínima
+      const item = { x, corte: o[1], folga: nota - o[1], semCorte: !(o[1] > 0) };
+      (item.semCorte || item.folga >= 0 ? passa : quase).push(item);
+    }
+    passa.sort((a, b) => (a.semCorte - b.semCorte) || (b.corte - a.corte));   // as mais concorridas primeiro
+    quase.sort((a, b) => b.folga - a.folga);                                   // as mais perto primeiro
+    // conta só OUTRAS universidades (outros campi da mesma aparecem na lista, mas não somam)
+    const propria = `${r.s}|${r.n}`;
+    const univ = (l) => new Set(l.map((i) => `${i.x.s}|${i.x.n}`).filter((u) => u !== propria)).size;
+    return { passa, quase, uf: r.u, nUniv: univ(passa), univ };
+  }
+
+  function renderOnde(onde, R) {
+    const box = $('onde');
+    if (!onde) { box.hidden = true; return; }
+    box.hidden = false;
+    const r = S.curso.oferta;
+    $('onde_uf').textContent = `Só ${onde.uf}`;
+    const noFiltro = (l) => (ondeFiltro === 'UF' ? l.filter((i) => i.x.u === onde.uf) : l);
+    const passa = noFiltro(onde.passa), quase = noFiltro(onde.quase);
+    const n = onde.univ(passa);
+    const onde_ = ondeFiltro === 'UF' ? ` no ${onde.uf}` : '';
+    const nEl = `<span class="onde-n" id="onde_n">${n}</span>`;
+    const kTxt = (k) => (k > 45 ? '45 (o máximo)' : String(k));   // acima de 45, a conta usa o máximo possível
+    const metaTxt = (R.kMT !== null && R.kCN !== null) ? ` (${kTxt(R.kMT)} em MT · ${kTxt(R.kCN)} em CN)` : '';
+    const outrosCampi = passa.filter((i) => `${i.x.s}|${i.x.n}` === `${r.s}|${r.n}`).length;
+    if (n > 0) {
+      $('onde_tit').innerHTML = `Você também passaria em ${nEl} ${n === 1 ? 'universidade' : 'universidades'}${onde_}`;
+      $('onde_sub').textContent = `com ${titulo(r.k)} e essa mesma meta${metaTxt}.`;
+    } else if (outrosCampi > 0) {
+      // só passa em outro campus da própria universidade
+      $('onde_tit').innerHTML = `Você também passaria em outro campus da ${esc(r.s)}${onde_}`;
+      $('onde_sub').textContent = `com ${titulo(r.k)} e essa mesma meta${metaTxt}.`;
+    } else {
+      $('onde_tit').innerHTML = `Por enquanto, nenhuma outra${onde_}`;
+      $('onde_sub').textContent = quase.length ? 'Essas são as que ficaram mais perto. Mexa na balança ou na redação:' : `Não há outra oferta de ${titulo(r.k)} nessa modalidade${onde_}.`;
+    }
+    const lista = (n > 0 || outrosCampi > 0) ? passa : quase;
+    const lim = ondeTodas ? 40 : 5;
+    const fmtF = (f) => (f >= 0 ? `+${fmt0(f)}` : `−${fmt0(-f)}`);
+    $('onde_lista').innerHTML = lista.slice(0, lim).map((i) => `<li>
+        <div class="onde-q"><b>${esc(i.x.s)}</b><span>${esc(i.x.m)}/${esc(i.x.u)} · ${esc(i.x.t)}</span></div>
+        <div class="onde-c">${i.semCorte ? '<span>sem corte</span><b>em 2025</b>' : `<span>corte</span><b>${fmt2(i.corte)}</b>`}
+          ${i.semCorte ? '' : `<em class="${i.folga >= 0 ? 'folga' : 'falta'}">${i.folga >= 0 ? `${fmtF(i.folga)} de folga` : `faltam ${fmt0(-i.folga)}`}</em>`}</div>
+      </li>`).join('');
+    const resto = lista.length - lim;
+    $('onde_mais').hidden = !(resto > 0 || ondeTodas) || lista.length <= 5;
+    $('onde_mais').textContent = ondeTodas ? 'mostrar menos' : `ver todas (${Math.min(lista.length, 40)})`;
+    // pisca o número quando ele muda
+    const el = $('onde_n');
+    if (el && S.ondeUltimo !== undefined && S.ondeUltimo !== n) {
+      el.classList.remove('pisca'); void el.offsetWidth; el.classList.add('pisca');
+    }
+    S.ondeUltimo = n;
   }
 
   /* ===================================================================
@@ -331,6 +423,7 @@
     S.curso = {
       nome: `${titulo(r.k)} · ${r.s}`, pesos: toObj(r.p), min: toObj(r.mn), mediaMin: r.mm || 0,
       corte: o[1], sobrou: !(o[1] > 0), modalidade: o[0] === 0 ? '' : 'cota', edicao: S.cursos.meta && S.cursos.meta.edicao_corte,
+      oferta: r, modIdx: o[0],
     };
     $('btn_ok').disabled = false;
     $('m_ok').hidden = true;
@@ -524,23 +617,33 @@
     ctx.font = `800 62px ${D}`;
     const lCurso = quebrar(ctx, R.curso.nome, W - 2 * M).slice(0, 2);
     lCurso.forEach((l, i) => ctx.fillText(l, M, fimBloco + 95 + i * 72));
+    // "e passaria em mais N universidades" (se couber)
+    let yAviso = fimBloco + 95 + lCurso.length * 72;
+    let entreAviso = 32;
+    if (R.ondeN > 0 && yAviso + 52 + 2 * 28 < 1640) {
+      entreAviso = 28;
+      ctx.font = `700 34px ${D}`;
+      const txt = `+ passaria em mais ${R.ondeN} ${R.ondeN === 1 ? 'universidade' : 'universidades'}`;
+      marca(txt, M, yAviso + 6, 34);
+      ctx.fillStyle = TINTA; ctx.fillText(txt, M, yAviso + 6);
+      yAviso += 60;
+    }
     // aviso técnico (curto)
     ctx.fillStyle = CINZA; ctx.font = `500 22px ${MONO}`;
-    const yAviso = fimBloco + 95 + lCurso.length * 72;
     ['Valores estimados. Na TRI, a nota depende de quais itens você',
      'acerta e da coerência das respostas, não só do nº de acertos.',
      `Base: microdados ENEM ${S.tri.edicoes[0]}–${S.tri.edicoes[S.tri.edicoes.length - 1]} (Inep) e cortes Sisu 2025 (MEC).`]
-      .forEach((l, i) => ctx.fillText(l, M, yAviso + i * 32));
+      .forEach((l, i) => ctx.fillText(l, M, yAviso + i * entreAviso));
 
     // rodapé: assinatura + site com marca-texto
     ctx.fillStyle = TINTA; ctx.font = `800 46px ${D}`;
-    ctx.fillText('Calcule a sua', M, 1690);
+    ctx.fillText('Calcule a sua', M, 1704);
     ctx.font = `600 34px ${MONO}`;
-    ctx.fillText(`Prof. João Capri ${CFG.ARROBA || ''}`.trim(), M, 1745);
+    ctx.fillText(`Prof. João Capri ${CFG.ARROBA || ''}`.trim(), M, 1756);
     ctx.font = `850 64px ${D}`;
-    desenharIcone(ctx, 1080 - M - 190, 1660, 190);
-    marca(CFG.SITE || '', M, 1835, 64);
-    ctx.fillStyle = TINTA; ctx.fillText(CFG.SITE || '', M, 1835);
+    desenharIcone(ctx, 1080 - M - 180, 1678, 180);
+    marca(CFG.SITE || '', M, 1842, 64);
+    ctx.fillStyle = TINTA; ctx.fillText(CFG.SITE || '', M, 1842);
 
     cv.toBlob((blob) => {
       if (!blob) return;
@@ -887,6 +990,14 @@
       if (S.planoArea) evento(`plano/montou ${PLANOS[S.planoArea].nome}`);
       for (const id of marcados[S.planoArea] || []) evento(`assunto-fraco/${PLANOS[S.planoArea].nome}/${PLANOS[S.planoArea].topicos.find((t) => t.id === id).nome}`);
     });
+    document.querySelectorAll('#onde .seg button').forEach((b) => b.addEventListener('click', () => {
+      ondeFiltro = b.dataset.f; ondeTodas = false;
+      document.querySelectorAll('#onde .seg button').forEach((x) => x.classList.toggle('ativo', x === b));
+      S.ondeUltimo = undefined;
+      atualizarMeta();
+      evento(`onde/filtro ${ondeFiltro === 'UF' ? 'meu estado' : 'Brasil'}`);
+    }));
+    $('onde_mais').addEventListener('click', () => { ondeTodas = !ondeTodas; atualizarMeta(); if (ondeTodas) evento('onde/ver todas'); });
     $('btn_card').addEventListener('click', (e) => {
       e.preventDefault();
       $('etapa3').scrollIntoView({ behavior: 'smooth', block: 'start' });
