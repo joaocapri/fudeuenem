@@ -18,8 +18,10 @@ window.CONFIG = {
   // Datas do plano de estudos (2º dia do ENEM 2026 = 15/11)
   DATA_PROVA: '2026-11-15',
 
-  // Quando a faixa "Saiu do 2º dia? Veja onde você passa" aparece na página inicial,
-  // levando para /2dia (horário de Brasília). Para adiar, troque a data; para testar
-  // antes, abra o site com ?previa no fim do endereço (ex.: fudeuenem.com/?previa).
+  // VIRADA PÓS-PROVA: a partir deste momento (horário de Brasília) a página inicial leva
+  // direto para o "Onde eu passo?" (/2dia), que vira a função principal do site.
+  //  - testar antes: fudeuenem.com/?previa
+  //  - usar a calculadora antiga depois da virada: fudeuenem.com/?calculadora
+  //  - voltar ao modo "antes da prova" (ex.: ENEM do ano que vem): troque para a nova data.
   POS_PROVA_EM: '2026-11-15T14:00:00-03:00',
 };

@@ -973,14 +973,6 @@
     info.addEventListener('click', (e) => { if (e.target === info) fecharInfo(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !info.hidden) fecharInfo(); });
 
-    // Pós-prova: a partir de CFG.POS_PROVA_EM (ou com ?previa), mostra a faixa para /2dia
-    const posProva = (CFG.POS_PROVA_EM && Date.now() >= Date.parse(CFG.POS_PROVA_EM)) || /[?&]previa\b/.test(location.search);
-    if (posProva) {
-      $('faixa_pos').hidden = false;
-      $('volta_txt').innerHTML = '<b>Já fez a prova?</b> Coloque seus acertos e descubra <a href="2dia/">onde você passa →</a>';
-      $('faixa_pos').addEventListener('click', () => evento('clique/faixa pós-prova'));
-    }
-
     $('m_usar').addEventListener('click', usarManual);
     $('btn_ok').addEventListener('click', confirmar);
     $('btn_editar').addEventListener('click', editar);

@@ -42,8 +42,10 @@ no `<head>` do `index.html`; os eventos são enviados pela função `evento()` e
 `2dia/index.html` + `assets/onde.js` + `assets/onde.css`. O aluno informa acertos (ou notas) das 4 áreas e a
 redação e vê onde passaria na 1ª chamada, com filtros, mapa do Brasil (`data/mapa.json`) e cards.
 
-- A página inicial passa a mostrar a faixa "Saiu do 2º dia? Veja onde você passa" a partir de
-  `POS_PROVA_EM` (em `assets/config.js`, horário de Brasília). Para ver antes: `fudeuenem.com/?previa`.
+- **Virada:** a partir de `POS_PROVA_EM` (em `assets/config.js`, horário de Brasília) a página inicial leva
+  direto para `/2dia`, que vira a função principal. Testar antes: `fudeuenem.com/?previa`.
+- **Calculadora do 2º dia guardada:** continua em `index.html` + `assets/app.js`; depois da virada abre com
+  `fudeuenem.com/?calculadora`. Para reativá-la no ano seguinte, troque `POS_PROVA_EM` para a nova data.
 - O mapa é gerado por `scripts/gera_mapa.py` (contorno dos estados e coordenadas dos municípios, derivados do IBGE):
   ```bash
   python3 scripts/gera_mapa.py raw/geo/brazil-states.geojson raw/geo/municipios.csv raw/geo/estados.csv

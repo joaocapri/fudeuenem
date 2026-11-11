@@ -4,10 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Fudeu ENEM?! · Calculadora do 2º dia</title>
-  <meta name="description" content="Quantas questões de Matemática e Natureza você precisa acertar no 2º dia do ENEM para passar no curso que você quer. Por Prof. João Capri.">
+  <meta name="description" content="Calculadora inteligente do ENEM: descubra quantas questões precisa acertar e em quais universidades você passa no Sisu. Por Prof. João Capri.">
   <meta name="theme-color" content="#ffffff">
-  <meta property="og:title" content="Quantas questões preciso acertar no 2º dia do ENEM?">
-  <meta property="og:description" content="Seus acertos do 1º dia + o curso que você quer = sua meta em Matemática e Natureza.">
+  <!-- VIRADA PÓS-PROVA: a partir de CONFIG.POS_PROVA_EM (domingo 15/11, 14h de Brasília) a
+       página inicial passa a ser o "Onde eu passo?" (/2dia). A calculadora do 2º dia fica
+       guardada: abra com ?calculadora para usá-la; ?previa simula a virada antes da hora. -->
+  <script src="assets/config.js?v=27"></script>
+  <script>
+    (function () {
+      var q = location.search, c = window.CONFIG || {};
+      var virou = (c.POS_PROVA_EM && Date.now() >= Date.parse(c.POS_PROVA_EM)) || /[?&]previa\b/.test(q);
+      if (virou && !/[?&]calculadora\b/.test(q)) location.replace('2dia/');
+    })();
+  </script>
+  <meta property="og:title" content="Fudeu ENEM?! · Calculadora inteligente do ENEM">
+  <meta property="og:description" content="Coloque seus acertos e descubra onde você passa no Sisu.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fudeuenem.com/">
   <meta property="og:image" content="https://fudeuenem.com/assets/og.png">
@@ -19,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
-  <link rel="stylesheet" href="assets/style.css?v=26">
+  <link rel="stylesheet" href="assets/style.css?v=27">
 
   <!-- ===== ANALYTICS: GoatCounter (gratuito, sem cookies, sem dados pessoais).
        Painel: https://fudeuenem.goatcounter.com — se criar a conta com outro código,
@@ -38,11 +49,6 @@
       </div>
       <button type="button" class="btn-info" id="btn_info" aria-haspopup="dialog" aria-controls="info" aria-label="Como funciona">?</button>
     </div>
-
-    <a class="faixa-pos" id="faixa_pos" href="2dia/" hidden>
-      <span>Saiu do 2º dia?</span>
-      <b>Veja onde você passa →</b>
-    </a>
 
     <header class="topo">
       <p class="sobre">ENEM 2026 · 2º dia · 15/11</p>
@@ -275,7 +281,6 @@
     </div>
   </div>
 
-  <script src="assets/config.js?v=26"></script>
-  <script src="assets/app.js?v=26"></script>
+  <script src="assets/app.js?v=27"></script>
 </body>
 </html>
