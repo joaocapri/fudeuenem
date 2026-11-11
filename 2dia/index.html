@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Onde eu passo? · Fudeu ENEM?!</title>
+  <meta name="description" content="Saiu do ENEM? Coloque seus acertos e veja em quais cursos e universidades você passaria na 1ª chamada do Sisu, com mapa do Brasil.">
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:title" content="Saiu do ENEM? Veja onde você passa">
+  <meta property="og:description" content="Coloque seus acertos e descubra em quais universidades você passaria na 1ª chamada do Sisu.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fudeuenem.com/2dia/">
+  <meta property="og:image" content="https://fudeuenem.com/assets/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="../assets/icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/icone-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+  <link rel="stylesheet" href="../assets/style.css?v=26">
+  <link rel="stylesheet" href="../assets/onde.css?v=1">
+  <!-- Analytics: GoatCounter (sem cookies). Eventos enviados por assets/onde.js -->
+  <script data-goatcounter="https://fudeuenem.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body>
+  <main class="wrap">
+
+    <div class="marca-topo">
+      <a href="../" class="logo-link" aria-label="Voltar para a calculadora do 2º dia">
+        <img class="logo-ico" src="../assets/icone.svg" alt="" width="54" height="54">
+        <div class="logo-textos">
+          <span class="logo-txt">FUDEU <mark class="grifo">ENEM</mark>?!</span>
+          <span class="logo-sub">Calculadora inteligente</span>
+        </div>
+      </a>
+    </div>
+
+    <header class="topo">
+      <p class="sobre">ENEM 2026 · pós-prova</p>
+      <h1>Saiu do ENEM. Onde você <mark class="grifo">passa</mark>?<span class="ast">*</span></h1>
+      <p class="nota-ast">*na 1ª chamada, com os cortes do Sisu 2025</p>
+    </header>
+
+    <!-- ============ PASSO 1: COMO VOCÊ FOI ============ -->
+    <section class="bloco" id="ficha_notas">
+      <p class="bloco-tab">Passo 1</p>
+      <h2 class="bloco-tit">Como você foi no ENEM?</h2>
+      <div class="seg" role="group" aria-label="Como informar o desempenho">
+        <button type="button" class="ativo" data-modo="acertos">Tenho os acertos</button>
+        <button type="button" data-modo="notas">Tenho as notas</button>
+      </div>
+      <div class="grade-areas">
+        <div class="contador">
+          <label class="rot" for="in_LC">Linguagens</label>
+          <div class="ctl">
+            <button type="button" class="pm" data-alvo="in_LC" data-d="-1" aria-label="Menos um em Linguagens">−</button>
+            <input type="number" id="in_LC" data-area="LC" min="0" max="45" placeholder="–" inputmode="numeric">
+            <button type="button" class="pm" data-alvo="in_LC" data-d="1" aria-label="Mais um em Linguagens">+</button>
+          </div>
+          <p class="aux" id="est_LC">acertos de 45</p>
+        </div>
+        <div class="contador">
+          <label class="rot" for="in_CH">Humanas</label>
+          <div class="ctl">
+            <button type="button" class="pm" data-alvo="in_CH" data-d="-1" aria-label="Menos um em Humanas">−</button>
+            <input type="number" id="in_CH" data-area="CH" min="0" max="45" placeholder="–" inputmode="numeric">
+            <button type="button" class="pm" data-alvo="in_CH" data-d="1" aria-label="Mais um em Humanas">+</button>
+          </div>
+          <p class="aux" id="est_CH">acertos de 45</p>
+        </div>
+        <div class="contador">
+          <label class="rot" for="in_CN">Natureza</label>
+          <div class="ctl">
+            <button type="button" class="pm" data-alvo="in_CN" data-d="-1" aria-label="Menos um em Natureza">−</button>
+            <input type="number" id="in_CN" data-area="CN" min="0" max="45" placeholder="–" inputmode="numeric">
+            <button type="button" class="pm" data-alvo="in_CN" data-d="1" aria-label="Mais um em Natureza">+</button>
+          </div>
+          <p class="aux" id="est_CN">acertos de 45</p>
+        </div>
+        <div class="contador">
+          <label class="rot" for="in_MT">Matemática</label>
+          <div class="ctl">
+            <button type="button" class="pm" data-alvo="in_MT" data-d="-1" aria-label="Menos um em Matemática">−</button>
+            <input type="number" id="in_MT" data-area="MT" min="0" max="45" placeholder="–" inputmode="numeric">
+            <button type="button" class="pm" data-alvo="in_MT" data-d="1" aria-label="Mais um em Matemática">+</button>
+          </div>
+          <p class="aux" id="est_MT">acertos de 45</p>
+        </div>
+      </div>
+      <div class="redacao compacta">
+        <label class="pergunta" for="red">Quanto acha que tirou na <mark class="grifo">redação</mark>?</label>
+        <output id="red_v" for="red">720</output>
+        <input type="range" id="red" min="0" max="1000" step="20" value="720">
+      </div>
+    </section>
+
+    <!-- ============ RESULTADO ============ -->
+    <section class="resultado" id="resultado" aria-live="polite">
+      <p class="res-pre" id="res_pre">Preencha as 4 áreas para ver onde você passa.</p>
+      <div class="res-num" id="res_num" hidden>
+        <span class="n" id="res_n">0</span>
+        <span class="un" id="res_un">cursos</span>
+      </div>
+      <p class="res-det" id="res_det" hidden></p>
+    </section>
+
+    <div id="corpo" hidden>
+      <!-- sonho: o curso escolhido na calculadora do 2º dia -->
+      <section class="sonho" id="sonho" hidden></section>
+
+      <!-- ============ PASSO 2: FILTROS ============ -->
+      <section class="bloco" id="ficha_filtros">
+        <p class="bloco-tab">Passo 2</p>
+        <h2 class="bloco-tit">O que você procura?</h2>
+        <div class="campo" id="curso_box">
+          <label class="rot" for="f_curso">Curso</label>
+          <input type="search" id="f_curso" placeholder="todos (digite para filtrar)" autocomplete="off">
+          <ul class="lista" id="f_curso_lista" role="listbox"></ul>
+        </div>
+        <div class="escolhido" id="curso_sel" hidden></div>
+        <div class="filtros-grade">
+          <label class="rot" for="f_uf">Estado
+            <select id="f_uf"><option value="">Todo o Brasil</option></select></label>
+          <label class="rot" for="f_cidade">Cidade
+            <select id="f_cidade" disabled><option value="">—</option></select></label>
+          <label class="rot larga" for="f_ies">Universidade
+            <select id="f_ies"><option value="">Todas</option></select></label>
+          <label class="rot larga" for="f_mod">Modalidade
+            <select id="f_mod"></select></label>
+        </div>
+        <button type="button" class="link-sec" id="f_limpar" hidden>limpar filtros</button>
+      </section>
+
+      <!-- ============ MAPA ============ -->
+      <section class="mapa-sec">
+        <div class="mapa-topo">
+          <h2 class="res-tit">Seu <mark class="grifo">mapa</mark></h2>
+          <button type="button" class="link-sec" id="mapa_br" hidden>ver Brasil todo</button>
+        </div>
+        <div class="mapa-caixa"><svg id="mapa" role="img" aria-label="Mapa do Brasil com as cidades onde você passaria"></svg></div>
+        <p class="aux centro" id="mapa_leg">Cada bolinha é uma cidade onde você passaria. Toque num estado para filtrar.</p>
+      </section>
+
+      <!-- ============ LISTA ============ -->
+      <section class="lista-sec">
+        <div class="seg" role="group" aria-label="Tipo de lista" id="abas">
+          <button type="button" class="ativo" data-aba="passa" id="aba_passa">Passaria</button>
+          <button type="button" data-aba="quase" id="aba_quase">Por pouco</button>
+        </div>
+        <ul class="onde-lista" id="lista"></ul>
+        <button type="button" class="acao sec" id="mais" hidden>ver mais</button>
+      </section>
+
+      <!-- ============ CARDS ============ -->
+      <section class="etapa share" id="cards">
+        <h2 class="res-tit">Seu <mark class="grifo">card</mark></h2>
+        <div class="seg" role="group" aria-label="Modelo do card">
+          <button type="button" class="ativo" data-card="mapa">Mapa</button>
+          <button type="button" data-card="lista">Ranking</button>
+        </div>
+        <img id="card_img" alt="Card com o seu resultado para postar no story">
+        <button type="button" class="acao tatil escuro" id="btn_share">Compartilhar</button>
+        <p class="aux centro">ou toque e segure na imagem para salvar</p>
+      </section>
+
+      <section class="etapa">
+        <div class="exatoo">
+          <p>Vai para a próxima? Treine Matemática no Exatoo.</p>
+          <a id="btn_exatoo" href="https://exatoo.com" target="_blank" rel="noopener">exatoo.com →</a>
+        </div>
+      </section>
+    </div>
+
+    <footer class="rodape">
+      <p><b>Estimativa, não garantia.</b> As notas são estimadas pela mediana de quem teve os mesmos acertos no ENEM de 2022 a 2025 (Inep); na TRI, a nota depende de quais questões você acertou. Os cortes são os da chamada regular do Sisu 2025 (MEC) e mudam a cada ano; pela lista de espera costumam ser menores. Sem vínculo com o Inep ou o MEC. Contagem de acessos anônima, sem cookies.</p>
+      <p>Prof. João Capri <span data-arroba></span> · <a href="../">calculadora do 2º dia</a></p>
+    </footer>
+  </main>
+
+  <script src="../assets/config.js?v=26"></script>
+  <script src="../assets/onde.js?v=1"></script>
+</body>
+</html>

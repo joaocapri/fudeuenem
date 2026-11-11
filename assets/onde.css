@@ -1,0 +1,77 @@
+/* ===================== /2dia — "Onde eu passo?" =====================
+   Complementa assets/style.css (mesma identidade: papel branco, tinta preta,
+   marca-texto amarelo). */
+.logo-link { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; min-width: 0; }
+#corpo { display: flex; flex-direction: column; gap: 34px; }
+#corpo[hidden] { display: none; }
+
+/* passo 1: quatro áreas */
+#ficha_notas { gap: 18px; }
+.grade-areas { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+#ficha_notas .redacao.compacta { border-top: 1px dashed #cfcfcf; padding-top: 12px; }
+body.modo-notas .grade-areas .pm { display: none; }
+body.modo-notas .grade-areas .ctl input { font-size: 34px; }
+
+/* resultado: número gigante */
+.resultado { display: flex; flex-direction: column; gap: 6px; margin: -6px 0; }
+.res-pre { margin: 0; font-size: 17px; }
+.res-num { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+.res-num .n {
+  font: 900 clamp(84px, 27vw, 128px)/0.9 var(--f-display); font-stretch: 78%; letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+  padding: 0 8px 0 2px; background: linear-gradient(transparent 52%, var(--marca) 52%, var(--marca) 90%, transparent 90%);
+}
+.res-num .n.pisca { animation: pisca-n .4s ease-out; }
+.res-num .un { font: 850 30px/1 var(--f-display); font-stretch: 85%; }
+.res-det { margin: 0; font-size: 15px; color: var(--tinta-2); }
+.res-det b { color: var(--tinta); }
+
+/* sonho */
+.sonho { border: 2px dashed var(--tinta); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.sonho[hidden] { display: none; }
+.sonho .rot { margin: 0; color: var(--tinta-2); }
+.sonho .s-curso { margin: 0; font: 800 19px/1.2 var(--f-display); }
+.sonho .s-ver { margin: 2px 0 0; font-size: 15px; }
+.sonho .s-ver b { font: 900 17px var(--f-display); padding: 0 3px; background: linear-gradient(transparent 55%, var(--marca) 55%, var(--marca) 92%, transparent 92%); }
+.sonho .s-ver.nao b { background: none; color: var(--estouro); padding: 0; }
+
+/* filtros */
+#ficha_filtros { gap: 16px; }
+.filtros-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; }
+.filtros-grade .larga { grid-column: 1 / -1; }
+.filtros-grade label { margin: 0; min-width: 0; }
+.filtros-grade select {
+  display: block; width: 100%; margin-top: 6px; font: 500 16px var(--f-texto); letter-spacing: 0; text-transform: none; color: var(--tinta);
+  background: var(--papel); border: 1.5px solid var(--tinta); border-radius: 6px; padding: 10px 8px;
+}
+.filtros-grade select:disabled { border-color: #cfcfcf; color: #a3a3a3; }
+#curso_sel { align-items: center; }
+
+/* mapa */
+.mapa-sec { display: flex; flex-direction: column; gap: 10px; }
+.mapa-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.mapa-caixa { border: 2px solid var(--tinta); border-radius: 12px; box-shadow: 4px 4px 0 var(--tinta); background: var(--papel); padding: 8px; }
+#mapa { display: block; width: 100%; height: auto; touch-action: manipulation; }
+#mapa .uf { fill: #fff; stroke: var(--tinta); stroke-width: 1; vector-effect: non-scaling-stroke; cursor: pointer; }
+#mapa .uf.tem { fill: #fff6b0; }
+#mapa .uf.sel { stroke-width: 2.5; }
+#mapa .uf.fora { fill: #f3f3f3; stroke: #bdbdbd; }
+#mapa .pt { fill: var(--marca); stroke: var(--tinta); stroke-width: 1.5; vector-effect: non-scaling-stroke; cursor: pointer; }
+#mapa .pt.sel { fill: var(--tinta); }
+#mapa .rotulo { font: 700 13px var(--f-mono); fill: var(--tinta); pointer-events: none; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+
+/* lista */
+.lista-sec { display: flex; flex-direction: column; gap: 10px; }
+#lista .onde-q b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#lista .vazio { display: block; color: var(--tinta-2); font-size: 14px; padding: 14px 0; }
+.onde-c .limite { color: #9a6700; }
+
+/* cards */
+#cards { gap: 14px; }
+#cards[hidden] { display: none; }
+#card_img { display: block; width: 100%; max-width: 320px; margin: 0 auto; aspect-ratio: 9 / 16; border: 1px solid var(--linha); background: #fafafa; }
+#cards .seg, #cards .acao { max-width: 320px; width: 100%; margin: 0 auto; }
+#cards .aux { margin-top: -6px; }
+
+/* faixa de volta para a calculadora */
+.rodape a { color: var(--tinta); }
+@media (prefers-reduced-motion: reduce) { .res-num .n.pisca { animation: none; } }

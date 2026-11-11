@@ -37,6 +37,19 @@ no `<head>` do `index.html`; os eventos são enviados pela função `evento()` e
 `curso/…`, `faculdade/…`, `modalidade/…`, `acertos-1o-dia/…`, `compartilhou/card`, `meta-compartilhada/…`,
 `redacao-estimada/…`, `plano/abriu|montou|baixou …`, `assunto-fraco/…`, `clique/exatoo`, `usou/balança MT × CN`.
 
+## Página pós-prova: `/2dia` ("Onde eu passo?")
+
+`2dia/index.html` + `assets/onde.js` + `assets/onde.css`. O aluno informa acertos (ou notas) das 4 áreas e a
+redação e vê onde passaria na 1ª chamada, com filtros, mapa do Brasil (`data/mapa.json`) e cards.
+
+- A página inicial passa a mostrar a faixa "Saiu do 2º dia? Veja onde você passa" a partir de
+  `POS_PROVA_EM` (em `assets/config.js`, horário de Brasília). Para ver antes: `fudeuenem.com/?previa`.
+- O mapa é gerado por `scripts/gera_mapa.py` (contorno dos estados e coordenadas dos municípios, derivados do IBGE):
+  ```bash
+  python3 scripts/gera_mapa.py raw/geo/brazil-states.geojson raw/geo/municipios.csv raw/geo/estados.csv
+  ```
+  Rode de novo sempre que `data/cursos.json` mudar (cidades novas).
+
 ## Como atualizar os dados
 
 Requisitos: Python 3.10+ com `pandas` e `numpy` (`pip install pandas numpy openpyxl`).

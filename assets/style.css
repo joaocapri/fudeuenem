@@ -416,3 +416,13 @@ body.modo-resultado #etapa2 > .res-topo:not(:first-child) { margin-top: 14px; }
 .onde-c .falta { color: var(--estouro); }
 .link-sec { align-self: flex-start; background: none; border: 0; padding: 0; font: 600 13px var(--f-mono); text-decoration: underline; text-underline-offset: 3px; color: var(--tinta); cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { .onde-n.pisca { animation: none; } }
+
+/* ---------- faixa pós-prova (aparece a partir de CONFIG.POS_PROVA_EM) ---------- */
+.faixa-pos {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; text-decoration: none;
+  background: var(--tinta); color: var(--papel); border-radius: 10px; padding: 12px 14px; box-shadow: 4px 4px 0 var(--marca);
+  font-size: 15px; margin-bottom: -14px;
+}
+.faixa-pos[hidden] { display: none; }
+.faixa-pos b { color: var(--marca); font: 850 17px var(--f-display); }
+.volta a { color: var(--tinta); font-weight: 700; }

@@ -476,6 +476,8 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     const r = S.ofertaSel;
+    // guarda o curso escolhido para a página /2dia mostrar "o curso que você queria"
+    try { if (r) localStorage.setItem('fudeuenem_sonho', JSON.stringify({ id: r.id, mod: S.curso.modIdx })); } catch (e) { /* sem armazenamento */ }
     evento(r ? `curso/${r.s}/${titulo(r.k)} (${r.m})` : 'curso/digitado à mão', r ? `${titulo(r.k)} · ${r.s} · ${r.m}` : 'Curso digitado à mão');
     evento(`faculdade/${r ? r.s : 'digitado à mão'}`);
     evento(`modalidade/${!r ? 'digitado à mão' : S.curso.sobrou ? 'sem nota de corte' : S.curso.modalidade ? 'cota' : 'ampla'}`);
@@ -970,6 +972,14 @@
     $('info_fechar').addEventListener('click', fecharInfo);
     info.addEventListener('click', (e) => { if (e.target === info) fecharInfo(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !info.hidden) fecharInfo(); });
+
+    // Pós-prova: a partir de CFG.POS_PROVA_EM (ou com ?previa), mostra a faixa para /2dia
+    const posProva = (CFG.POS_PROVA_EM && Date.now() >= Date.parse(CFG.POS_PROVA_EM)) || /[?&]previa\b/.test(location.search);
+    if (posProva) {
+      $('faixa_pos').hidden = false;
+      $('volta_txt').innerHTML = '<b>Já fez a prova?</b> Coloque seus acertos e descubra <a href="2dia/">onde você passa →</a>';
+      $('faixa_pos').addEventListener('click', () => evento('clique/faixa pós-prova'));
+    }
 
     $('m_usar').addEventListener('click', usarManual);
     $('btn_ok').addEventListener('click', confirmar);
